@@ -1,42 +1,42 @@
 // ─── Data ─────────────────────────────────────────────────────────────────────
-export const TEAM = [
-  {
-    initials: "DR",
-    name: "Dr. Ramesh Iyer",
-    role: "Founder & Chief Mentor",
-    field: "Academic Leadership & Research",
-    bio: "With over 20 years in academia, Dr. Iyer has guided more than 300 post-graduate and doctoral students through their research journeys. A former professor at a leading national university, he holds a PhD in Educational Research and has published extensively in peer-reviewed journals.",
-    expertise: ["Research Mentorship", "Thesis Structuring", "Academic Strategy"],
-    linkedin: "#",
-  },
-  {
-    initials: "PS",
-    name: "Prof. Sunita Patel",
-    role: "Research Advisor",
-    field: "Social Sciences & Humanities",
-    bio: "Prof. Patel specialises in qualitative and mixed-methods research design. With a background in sociology and over 15 years of research experience, she guides students through research methodology, data collection, and rigorous analysis frameworks.",
-    expertise: ["Qualitative Research", "Mixed Methods", "Data Analysis"],
-    linkedin: "#",
-  },
-  {
-    initials: "AK",
-    name: "Dr. Ankit Kulkarni",
-    role: "Senior Editor",
-    field: "Academic Writing & Linguistics",
-    bio: "Dr. Kulkarni is an expert in academic writing, discourse analysis, and editorial standards. He ensures that every student's work meets the highest benchmarks of scholarly communication — from structure and argumentation to grammar and citation style.",
-    expertise: ["Academic Editing", "APA / MLA / Chicago", "Scholarly Writing"],
-    linkedin: "#",
-  },
-  {
-    initials: "MV",
-    name: "Ms. Meera Varma",
-    role: "Publication Consultant",
-    field: "Journal Publishing & Research Dissemination",
-    bio: "With deep experience in research publishing and journal operations, Meera helps students navigate the complex landscape of academic publishing — from choosing the right journal and preparing submissions to handling revision cycles and responding to reviewers.",
-    expertise: ["Journal Selection", "Scopus / UGC Journals", "Peer Review Strategy"],
-    linkedin: "#",
-  },
-];
+// export const TEAM = [
+//   {
+//     initials: "DR",
+//     name: "Dr. Ramesh Iyer",
+//     role: "Founder & Chief Mentor",
+//     field: "Academic Leadership & Research",
+//     bio: "With over 20 years in academia, Dr. Iyer has guided more than 300 post-graduate and doctoral students through their research journeys. A former professor at a leading national university, he holds a PhD in Educational Research and has published extensively in peer-reviewed journals.",
+//     expertise: ["Research Mentorship", "Thesis Structuring", "Academic Strategy"],
+//     linkedin: "#",
+//   },
+//   {
+//     initials: "PS",
+//     name: "Prof. Sunita Patel",
+//     role: "Research Advisor",
+//     field: "Social Sciences & Humanities",
+//     bio: "Prof. Patel specialises in qualitative and mixed-methods research design. With a background in sociology and over 15 years of research experience, she guides students through research methodology, data collection, and rigorous analysis frameworks.",
+//     expertise: ["Qualitative Research", "Mixed Methods", "Data Analysis"],
+//     linkedin: "#",
+//   },
+//   {
+//     initials: "AK",
+//     name: "Dr. Ankit Kulkarni",
+//     role: "Senior Editor",
+//     field: "Academic Writing & Linguistics",
+//     bio: "Dr. Kulkarni is an expert in academic writing, discourse analysis, and editorial standards. He ensures that every student's work meets the highest benchmarks of scholarly communication — from structure and argumentation to grammar and citation style.",
+//     expertise: ["Academic Editing", "APA / MLA / Chicago", "Scholarly Writing"],
+//     linkedin: "#",
+//   },
+//   {
+//     initials: "MV",
+//     name: "Ms. Meera Varma",
+//     role: "Publication Consultant",
+//     field: "Journal Publishing & Research Dissemination",
+//     bio: "With deep experience in research publishing and journal operations, Meera helps students navigate the complex landscape of academic publishing — from choosing the right journal and preparing submissions to handling revision cycles and responding to reviewers.",
+//     expertise: ["Journal Selection", "Scopus / UGC Journals", "Peer Review Strategy"],
+//     linkedin: "#",
+//   },
+// ];
 
 export const EXPERTISE = [
   {
@@ -86,8 +86,56 @@ export const PARTNERS = [
   { name: "Elsevier Research Collaboration", abbr: "ERC", type: "Publishing Partner" },
 ];
 
+// export const VISION_POINTS = [
+//   "To become a leading platform for academic support, recognised for excellence in helping students advance their academic careers.",
+//   "To create an inclusive, accessible, and collaborative environment that fosters intellectual growth, innovation, and the exchange of ideas.",
+//   "By providing expert research guidance, writing assistance, and publication support, we envision contributing to the global academic community and shaping the future of research.",
+// ];
+
+
+// ─── modules/aboutus/constData/const.ts  (VISION_POINTS + TEAM blocks)
+// Replace the existing VISION_POINTS and TEAM arrays with these.
+// All other exports in this file remain unchanged.
+
+// ─── Vision Points ────────────────────────────────────────────────────────────
 export const VISION_POINTS = [
-  "To become a leading platform for academic support, recognised for excellence in helping students advance their academic careers.",
-  "To create an inclusive, accessible, and collaborative environment that fosters intellectual growth, innovation, and the exchange of ideas.",
+  "Our vision is to become a leading platform for academic support, recognized for excellence in helping students advance their academic careers.",
+  "We aim to create an inclusive, accessible, and collaborative environment that fosters intellectual growth, innovation, and the exchange of ideas.",
   "By providing expert research guidance, writing assistance, and publication support, we envision contributing to the global academic community and shaping the future of research.",
+];
+
+// ─── Team ─────────────────────────────────────────────────────────────────────
+export const TEAM = [
+  {
+    name: "Dr. Ananya Sharma",
+    initials: "AS",
+    role: "Research Director",
+    field: "Social Sciences & Qualitative Methods",
+    bio: "Dr. Sharma brings over 15 years of academic research experience, having guided more than 200 PhD scholars through their dissertation journeys. She specializes in qualitative research design and academic writing excellence.",
+    expertise: ["Research Design", "Qualitative Methods", "Thesis Writing", "Academic Publishing"],
+  },
+  {
+    name: "Prof. Ramesh Iyer",
+    initials: "RI",
+    role: "Data Analytics Lead",
+    field: "Statistics & Quantitative Research",
+    bio: "A seasoned statistician with deep expertise in SPSS, R, and Python, Prof. Iyer has supported hundreds of students in translating raw data into compelling academic narratives. His workshops on data analysis are among our most attended.",
+    expertise: ["SPSS", "R & Python", "Statistical Analysis", "Data Interpretation"],
+  },
+  {
+    name: "Dr. Priya Menon",
+    initials: "PM",
+    role: "Publication Specialist",
+    field: "Academic Writing & Journal Submissions",
+    bio: "Dr. Menon has helped over 150 researchers get published in Scopus and Web of Science indexed journals. She guides students from manuscript preparation through to handling reviewer comments and final acceptance.",
+    expertise: ["Journal Selection", "Manuscript Prep", "Peer Review", "Editing & Proofreading"],
+  },
+  {
+    name: "Mr. Karan Desai",
+    initials: "KD",
+    role: "Training & Mentorship Head",
+    field: "Certificate Courses & Skill Development",
+    bio: "Karan leads NanoNova's short-term training programs and certificate courses, designing curriculum that equips PG and PhD students with practical skills in research tools, academic writing, and professional development.",
+    expertise: ["Curriculum Design", "Training Programs", "Mentorship", "Student Development"],
+  },
 ];

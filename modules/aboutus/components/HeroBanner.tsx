@@ -23,7 +23,7 @@ function HeroBanner() {
               About <span className="text-[#F4A261]">IRTC</span>
             </h1>
             <p className="text-white/70 text-lg leading-relaxed mb-8">
-              Innovative Research & Training Centre is a dedicated academic support platform for
+              Nanonova Research & Training Centre is a dedicated academic support platform for
               post-graduate and doctoral students. We combine expert mentorship, research guidance,
               and professional publishing support to help every scholar reach their potential.
             </p>

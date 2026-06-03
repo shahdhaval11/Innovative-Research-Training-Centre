@@ -51,10 +51,10 @@ function Navbar() {
         {/* Logo */}
         <div className="flex items-center gap-3" onClick={() => router.push('/')} style={{ cursor: "pointer" }}>
           <div className="w-10 h-10 rounded-full bg-[#F4A261] flex items-center justify-center font-black text-[#003049] text-lg select-none">
-            IR
+            NR
           </div>
           <div className="leading-tight">
-            <p className="text-white font-bold text-sm tracking-wide">Innovative Research</p>
+            <p className="text-white font-bold text-sm tracking-wide">Nanonova Research</p>
             <p className="text-[#F4A261] text-xs tracking-widest uppercase">& Training Centre</p>
           </div>
         </div>

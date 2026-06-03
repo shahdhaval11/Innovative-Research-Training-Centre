@@ -1,4 +1,4 @@
-import {VISION_POINTS } from "@/modules/aboutus/constData/const";
+import { VISION_POINTS } from "@/modules/aboutus/constData/const";
 
 // ─── Mission & Vision ─────────────────────────────────────────────────────────
 function MissionVisionSection() {
@@ -8,13 +8,12 @@ function MissionVisionSection() {
         {/* Section header */}
         <div className="text-center mb-14">
           <span className="text-[#F4A261] font-bold text-sm uppercase tracking-widest">Our Purpose</span>
-          <h2 className="text-4xl font-black text-[#003049] mt-2">Mission & Vision</h2>
+          <h2 className="text-4xl font-black text-[#003049] mt-2">Mission &amp; Vision</h2>
         </div>
 
         <div className="grid md:grid-cols-2 gap-10">
           {/* Mission */}
           <div className="bg-[#003049] rounded-3xl p-10 relative overflow-hidden">
-            {/* Decorative circle */}
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#F4A261]/10 rounded-full pointer-events-none" />
             <div className="relative z-10">
               <div className="w-14 h-14 rounded-2xl bg-[#F4A261]/15 border border-[#F4A261]/30 flex items-center justify-center text-3xl mb-6">
@@ -24,7 +23,7 @@ function MissionVisionSection() {
               <p className="text-white/75 text-base leading-relaxed">
                 Our mission is to empower post-graduate and doctoral students with the tools,
                 resources, and expertise they need to succeed in their academic pursuits. We are
-                committed to providing high-quality, personalised services that help students produce
+                committed to providing high-quality, personalized services that help students produce
                 original, well-researched, and professionally written academic works.
               </p>
               <p className="text-white/75 text-base leading-relaxed mt-4">

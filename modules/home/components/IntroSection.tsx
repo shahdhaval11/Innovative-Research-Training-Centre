@@ -8,21 +8,21 @@ function IntroSection() {
         <div>
           <span className="text-[#F4A261] font-bold text-sm uppercase tracking-widest">About Us</span>
           <h2 className="text-4xl font-black text-[#003049] mt-2 mb-5 leading-tight">
-            Welcome to Innovative Research & Training Centre
+            Welcome to NanoNova Research &amp; Training Centre — Your Partner in Academic Excellence
           </h2>
           <p className="text-[#003049]/70 text-base leading-relaxed mb-5">
-            At Innovative Research & Training Centre, we are dedicated to helping post-graduate (PG)
-            and PhD students achieve their academic goals. Whether you're starting your research
+            At NanoNova Research &amp; Training Centre, we are dedicated to helping post-graduate (PG)
+            and PhD students achieve their academic goals. Whether you&apos;re starting your research
             journey, writing your thesis, or preparing for paper publication, our platform offers
             tailored services designed to guide you through every step.
           </p>
           <p className="text-[#003049]/70 text-base leading-relaxed mb-8">
-            We aim to provide expert advice, practical resources, and personalised support to ensure
-            your success in academia. We also focus on training students through short-term and
-            certificate courses.
+            We aim to provide expert advice, practical resources, and personalized support to ensure
+            your success in the world of academia. We focus on training students through short-term
+            and certificate courses.
           </p>
           <a
-            href="#"
+            href="/aboutus"
             className="inline-block bg-[#003049] text-white font-bold px-8 py-3 rounded-full hover:bg-[#02223a] transition-colors duration-200"
           >
             Learn More About Us

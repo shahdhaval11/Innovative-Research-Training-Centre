@@ -72,10 +72,10 @@ export default function AdminLogin() {
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-11 h-11 rounded-xl bg-[#6366f1] flex items-center justify-center font-black text-white text-base">
-              IR
+              NR
             </div>
             <div>
-              <p className="text-white font-bold text-sm tracking-wide">Innovative Research</p>
+              <p className="text-white font-bold text-sm tracking-wide">Nanonova Research</p>
               <p className="text-[#818cf8] text-xs tracking-widest uppercase">& Training Centre</p>
             </div>
           </div>
@@ -124,10 +124,10 @@ export default function AdminLogin() {
         {/* Mobile logo */}
         <div className="lg:hidden flex items-center gap-3 mb-10">
           <div className="w-10 h-10 rounded-xl bg-[#6366f1] flex items-center justify-center font-black text-white">
-            IR
+            NR
           </div>
           <div>
-            <p className="text-white font-bold text-sm">Innovative Research</p>
+            <p className="text-white font-bold text-sm">Nanonova Research</p>
             <p className="text-[#818cf8] text-xs tracking-widest uppercase">& Training Centre</p>
           </div>
         </div>

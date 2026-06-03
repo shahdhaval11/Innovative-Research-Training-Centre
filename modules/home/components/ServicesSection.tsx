@@ -1,16 +1,15 @@
 import { SERVICES } from "@/modules/home/constData/const";
 
-
 function ServicesSection() {
   return (
     <section className="bg-[#003049] py-20 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="text-[#F4A261] font-bold text-sm uppercase tracking-widest">What We Offer</span>
-          <h2 className="text-4xl font-black text-white mt-2">Comprehensive Academic Support</h2>
+          <h2 className="text-4xl font-black text-white mt-2">Comprehensive Support for Your Academic Journey</h2>
           <p className="text-white/60 mt-3 max-w-xl mx-auto text-base">
-            A wide range of services crafted specifically for PG & PhD students navigating their
-            academic journey.
+            A wide range of services crafted specifically for PG &amp; PhD students navigating every
+            stage of their academic journey.
           </p>
         </div>
 
@@ -31,7 +30,7 @@ function ServicesSection() {
 
         <div className="text-center mt-10">
           <a
-            href="#"
+            href="/studentSupport"
             className="inline-block border-2 border-[#F4A261] text-[#F4A261] font-bold px-8 py-3 rounded-full hover:bg-[#F4A261] hover:text-[#003049] transition-colors duration-200"
           >
             View All Services →

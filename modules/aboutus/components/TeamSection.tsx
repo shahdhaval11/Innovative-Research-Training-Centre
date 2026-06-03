@@ -1,3 +1,5 @@
+"use client";
+
 import { TEAM } from "@/modules/aboutus/constData/const";
 import { useState } from "react";
 
@@ -9,11 +11,13 @@ function TeamSection() {
     <section id="team" className="bg-[#003049] py-20 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
-          <span className="text-[#F4A261] font-bold text-sm uppercase tracking-widest">The People Behind IRTC</span>
+          <span className="text-[#F4A261] font-bold text-sm uppercase tracking-widest">The People Behind NanoNova</span>
           <h2 className="text-4xl font-black text-white mt-2">Meet Our Expert Team</h2>
           <p className="text-white/60 mt-3 max-w-2xl mx-auto text-base">
             Our team is made up of experienced academics, researchers, and professional editors who
-            are passionate about helping students succeed.
+            are passionate about helping students succeed. Each member brings a wealth of knowledge
+            and expertise in various fields of study, ensuring that you receive the best possible
+            guidance at every stage of your academic journey.
           </p>
         </div>
 
@@ -97,7 +101,7 @@ function TeamSection() {
         <div className="text-center mt-12">
           <p className="text-white/60 text-sm mb-4">Interested in joining our team of academic experts?</p>
           <a
-            href="#"
+            href="/contactus"
             className="inline-block border-2 border-[#F4A261] text-[#F4A261] font-bold px-8 py-3 rounded-full hover:bg-[#F4A261] hover:text-[#003049] transition-colors duration-200"
           >
             Join Our Team →

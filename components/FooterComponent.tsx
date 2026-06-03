@@ -7,10 +7,10 @@ function Footer() {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-9 h-9 rounded-full bg-[#F4A261] flex items-center justify-center font-black text-[#003049]">
-              IR
+              NR
             </div>
             <p className="text-white font-bold text-sm leading-tight">
-              Innovative Research<br />
+              Nanonova Research<br />
               <span className="text-[#F4A261] text-xs font-semibold tracking-widest uppercase">& Training Centre</span>
             </p>
           </div>
@@ -62,7 +62,7 @@ function Footer() {
       </div>
 
       <div className="border-t border-white/10 pt-6 text-center text-xs">
-        © {new Date().getFullYear()} Innovative Research & Training Centre. All Rights Reserved.
+        © {new Date().getFullYear()} Nanonova Research & Training Centre. All Rights Reserved.
       </div>
     </footer>
   );

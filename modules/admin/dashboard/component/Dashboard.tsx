@@ -173,7 +173,7 @@ export default function Dashboard() {
 
         {/* ── Main content ── */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          <Topbar user={user} onMenuToggle={() => setMobileMenu(true)} />
+          {/* <Topbar user={user} onMenuToggle={() => setMobileMenu(true)} /> */}
 
           {/* Scrollable body */}
           <main className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
@@ -416,7 +416,7 @@ export default function Dashboard() {
 
             {/* Footer */}
             <p className="text-center text-slate-700 text-xs pb-4">
-              IRTC Admin Panel · v1.0 · {new Date().getFullYear()} Innovative Research & Training Centre
+              IRTC Admin Panel · v1.0 · {new Date().getFullYear()} Nanonova Research & Training Centre
             </p>
           </main>
         </div>
