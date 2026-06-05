@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
       { success: true, message: "Login successful.", user: sessionPayload },
       { status: 200 }
     );
-  } catch {
+  } catch (err) {
+    console.error("[/api/admin/auth] Error:", err);
     return NextResponse.json(
       { success: false, message: "Server error. Please try again." },
       { status: 500 }

@@ -65,6 +65,7 @@ interface EventRecord {
   createdAt: string;
   attendees: number;
   venue: string;
+  registrationUrl: string;
 }
 
 interface FormData {
@@ -76,122 +77,12 @@ interface FormData {
   endTime: string;
   eventType: EventType | "";
   venue: string;
+  registrationUrl: string;
   imageName: string;
   imagePreview: string;
   pdfName: string;
 }
 
-// ─── Dummy Data ───────────────────────────────────────────────────────────────
-const DUMMY_EVENTS: EventRecord[] = [
-  {
-    id: "EVT-001",
-    title: "Research Methodology Masterclass",
-    description:
-      "A comprehensive 3-hour live session covering qualitative and quantitative research methods for PhD scholars. Participants will learn how to design robust research frameworks, select appropriate methodologies, and apply best practices in academic research.",
-    startDate: "2025-04-28",
-    endDate: "2025-04-28",
-    startTime: "10:00",
-    endTime: "13:00",
-    eventType: "Webinar",
-    status: "Upcoming",
-    imageName: "research-masterclass-banner.jpg",
-    imagePreview: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=80",
-    pdfName: "research-masterclass-brochure.pdf",
-    createdAt: "2025-04-10",
-    attendees: 120,
-    venue: "Online (Zoom)",
-  },
-  {
-    id: "EVT-002",
-    title: "Data Analysis with Python & R",
-    description:
-      "Hands-on workshop covering statistical analysis tools Python and R for academic research. Students will work with real datasets and learn to perform descriptive statistics, regression analysis, and data visualisation.",
-    startDate: "2025-05-02",
-    endDate: "2025-05-03",
-    startTime: "09:00",
-    endTime: "17:00",
-    eventType: "Workshop",
-    status: "Upcoming",
-    imageName: "data-analysis-workshop.jpg",
-    imagePreview: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80",
-    pdfName: "data-analysis-agenda.pdf",
-    createdAt: "2025-04-12",
-    attendees: 45,
-    venue: "IRTC Training Hall, Ahmedabad",
-  },
-  {
-    id: "EVT-003",
-    title: "Academic Writing Certificate Program",
-    description:
-      "A 6-week intensive certificate program on thesis writing, research paper structuring, and scholarly communication. Includes weekly live sessions, assignments, and one-on-one feedback from senior editors.",
-    startDate: "2025-05-10",
-    endDate: "2025-06-20",
-    startTime: "18:00",
-    endTime: "20:00",
-    eventType: "Certificate Course",
-    status: "Upcoming",
-    imageName: "writing-cert-poster.jpg",
-    imagePreview: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&q=80",
-    pdfName: "writing-program-syllabus.pdf",
-    createdAt: "2025-04-15",
-    attendees: 80,
-    venue: "Online (Google Meet)",
-  },
-  {
-    id: "EVT-004",
-    title: "National Research Conference 2025",
-    description:
-      "Annual national conference bringing together PhD scholars, faculty, and industry researchers to present and discuss cutting-edge research across disciplines including social sciences, life sciences, engineering, and management.",
-    startDate: "2025-03-15",
-    endDate: "2025-03-16",
-    startTime: "09:00",
-    endTime: "18:00",
-    eventType: "Conference",
-    status: "Completed",
-    imageName: "conference-2025-banner.jpg",
-    imagePreview: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&q=80",
-    pdfName: "conference-proceedings.pdf",
-    createdAt: "2025-02-20",
-    attendees: 350,
-    venue: "IIM Ahmedabad Campus",
-  },
-  {
-    id: "EVT-005",
-    title: "SPSS for Beginners — Field Training",
-    description:
-      "Practical field training session for students new to SPSS. Covers data entry, descriptive analysis, cross-tabulations, and basic inferential statistics with hands-on exercises using real survey data.",
-    startDate: "2025-04-22",
-    endDate: "2025-04-22",
-    startTime: "14:00",
-    endTime: "17:00",
-    eventType: "Field Training",
-    status: "Ongoing",
-    imageName: "spss-training.jpg",
-    imagePreview: "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=400&q=80",
-    pdfName: "spss-training-guide.pdf",
-    createdAt: "2025-04-05",
-    attendees: 30,
-    venue: "IRTC Computer Lab, Ahmedabad",
-  },
-  {
-    id: "EVT-006",
-    title: "Publication Strategy Seminar",
-    description:
-      "A focused seminar on how to get your research published in high-impact indexed journals. Topics include journal selection, manuscript preparation, handling reviewer comments, and avoiding predatory journals.",
-    startDate: "2025-04-10",
-    endDate: "2025-04-10",
-    startTime: "11:00",
-    endTime: "13:00",
-    eventType: "Seminar",
-    status: "Completed",
-    imageName: "publication-seminar.jpg",
-    imagePreview: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&q=80",
-    pdfName: "publication-strategy-notes.pdf",
-    createdAt: "2025-03-28",
-    attendees: 65,
-    venue: "Online (Zoom)",
-  },
-];
 
 const EVENT_TYPES: EventType[] = [
   "Webinar", "Workshop", "Seminar", "Conference", "Certificate Course", "Field Training", "Other",
@@ -220,7 +111,7 @@ const TYPE_STYLE: Record<EventType, string> = {
 const EMPTY_FORM: FormData = {
   title: "", description: "", startDate: "", endDate: "",
   startTime: "", endTime: "", eventType: "", venue: "",
-  imageName: "", imagePreview: "", pdfName: "",
+  registrationUrl: "", imageName: "", imagePreview: "", pdfName: "",
 };
 
 // ─── Input component ──────────────────────────────────────────────────────────
@@ -267,17 +158,18 @@ function EventModal({
   useEffect(() => {
     if (event && (isEdit || isView)) {
       setForm({
-        title:        event.title,
-        description:  event.description,
-        startDate:    event.startDate,
-        endDate:      event.endDate,
-        startTime:    event.startTime,
-        endTime:      event.endTime,
-        eventType:    event.eventType,
-        venue:        event.venue,
-        imageName:    event.imageName,
-        imagePreview: event.imagePreview,
-        pdfName:      event.pdfName,
+        title:           event.title,
+        description:     event.description,
+        startDate:       event.startDate,
+        endDate:         event.endDate,
+        startTime:       event.startTime,
+        endTime:         event.endTime,
+        eventType:       event.eventType,
+        venue:           event.venue,
+        registrationUrl: event.registrationUrl,
+        imageName:       event.imageName,
+        imagePreview:    event.imagePreview,
+        pdfName:         event.pdfName,
       });
     } else {
       setForm(EMPTY_FORM);
@@ -349,17 +241,18 @@ function EventModal({
   const handleSubmit = () => {
     if (!validate()) return;
     onSave({
-      title:        form.title,
-      description:  form.description,
-      startDate:    form.startDate,
-      endDate:      form.endDate,
-      startTime:    form.startTime,
-      endTime:      form.endTime,
-      eventType:    form.eventType as EventType,
-      venue:        form.venue,
-      imageName:    form.imageName,
-      imagePreview: form.imagePreview,
-      pdfName:      form.pdfName,
+      title:           form.title,
+      description:     form.description,
+      startDate:       form.startDate,
+      endDate:         form.endDate,
+      startTime:       form.startTime,
+      endTime:         form.endTime,
+      eventType:       form.eventType as EventType,
+      venue:           form.venue,
+      registrationUrl: form.registrationUrl,
+      imageName:       form.imageName,
+      imagePreview:    form.imagePreview,
+      pdfName:         form.pdfName,
     });
   };
 
@@ -575,6 +468,32 @@ function EventModal({
               )}
             </Field>
           </div>
+
+          {/* ─ Registration URL ─ */}
+          <Field label="Registration URL">
+            {isView ? (
+              form.registrationUrl ? (
+                <a
+                  href={form.registrationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#818cf8] text-sm underline underline-offset-2 break-all hover:text-[#6366f1] transition-colors"
+                >
+                  {form.registrationUrl}
+                </a>
+              ) : (
+                <p className="text-slate-500 text-sm italic">No registration URL provided</p>
+              )
+            ) : (
+              <input
+                type="url"
+                placeholder="https://example.com/register"
+                value={form.registrationUrl}
+                onChange={(e) => set("registrationUrl", e.target.value)}
+                className={inputCls}
+              />
+            )}
+          </Field>
 
           {/* ─ Image Upload ─ */}
           <Field label="Event Banner Image">
@@ -820,7 +739,8 @@ export default function Events() {
   const [user,         setUser]        = useState<AdminUser | null>(null);
   const [collapsed,    setCollapsed]   = useState(false);
   const [mobileMenu,   setMobileMenu]  = useState(false);
-  const [events,       setEvents]      = useState<EventRecord[]>(DUMMY_EVENTS);
+  const [events,       setEvents]      = useState<EventRecord[]>([]);
+  const [loading,      setLoading]     = useState(false);
   const [modal,        setModal]       = useState<{ mode: ModalMode; event: EventRecord | null } | null>(null);
   const [deleteTarget, setDeleteTarget]= useState<EventRecord | null>(null);
   const [toast,        setToast]       = useState<{ message: string; type: "success" | "error" } | null>(null);
@@ -835,6 +755,17 @@ export default function Events() {
     if (!raw) { router.replace("/admin/login"); return; }
     try { setUser(JSON.parse(raw)); } catch { router.replace("/admin/login"); }
   }, [router]);
+
+  // Fetch events from API
+  useEffect(() => {
+    if (!user) return;
+    setLoading(true);
+    fetch("/api/admin/events")
+      .then((r) => r.json())
+      .then((data) => { if (data.success) setEvents(data.events); })
+      .catch(() => setToast({ message: "Failed to load events.", type: "error" }))
+      .finally(() => setLoading(false));
+  }, [user]);
 
   // Filtered + sorted events
   const filtered = events
@@ -854,41 +785,53 @@ export default function Events() {
   const showToast = (message: string, type: "success" | "error" = "success") =>
     setToast({ message, type });
 
-  const handleSave = (data: Partial<EventRecord>) => {
+  const handleSave = async (data: Partial<EventRecord>) => {
     if (modal?.mode === "create") {
-      const newEvent: EventRecord = {
-        id:          `EVT-${String(events.length + 1).padStart(3, "0")}`,
-        title:        data.title       ?? "",
-        description:  data.description ?? "",
-        startDate:    data.startDate   ?? "",
-        endDate:      data.endDate     ?? "",
-        startTime:    data.startTime   ?? "",
-        endTime:      data.endTime     ?? "",
-        eventType:    data.eventType   ?? "Other",
-        status:       "Upcoming",
-        venue:        data.venue       ?? "",
-        imageName:    data.imageName   ?? "",
-        imagePreview: data.imagePreview?? "",
-        pdfName:      data.pdfName     ?? "",
-        createdAt:    new Date().toISOString().split("T")[0],
-        attendees:    0,
-      };
-      setEvents((prev) => [newEvent, ...prev]);
-      showToast("Event created successfully!");
+      try {
+        const res = await fetch("/api/admin/events", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json();
+        if (!json.success) throw new Error();
+        setEvents((prev) => [json.event, ...prev]);
+        showToast("Event created successfully!");
+      } catch {
+        showToast("Failed to create event.", "error");
+      }
     } else if (modal?.mode === "edit" && modal.event) {
-      setEvents((prev) =>
-        prev.map((e) => e.id === modal.event!.id ? { ...e, ...data } : e)
-      );
-      showToast("Event updated successfully!");
+      try {
+        const res = await fetch(`/api/admin/events/${modal.event.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json();
+        if (!json.success) throw new Error();
+        setEvents((prev) =>
+          prev.map((e) => e.id === modal.event!.id ? json.event : e)
+        );
+        showToast("Event updated successfully!");
+      } catch {
+        showToast("Failed to update event.", "error");
+      }
     }
     setModal(null);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deleteTarget) return;
-    setEvents((prev) => prev.filter((e) => e.id !== deleteTarget.id));
+    try {
+      const res = await fetch(`/api/admin/events/${deleteTarget.id}`, { method: "DELETE" });
+      const json = await res.json();
+      if (!json.success) throw new Error();
+      setEvents((prev) => prev.filter((e) => e.id !== deleteTarget.id));
+      showToast("Event deleted.");
+    } catch {
+      showToast("Failed to delete event.", "error");
+    }
     setDeleteTarget(null);
-    showToast("Event deleted.");
   };
 
   const formatDateShort = (d: string) =>
@@ -1055,7 +998,15 @@ export default function Events() {
 
         {/* ── Events Table ── */}
         <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl overflow-hidden">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center py-20 gap-3">
+              <svg className="animate-spin w-6 h-6 text-[#6366f1]" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+              </svg>
+              <p className="text-slate-400 text-sm">Loading events...</p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
               <div className="w-16 h-16 rounded-2xl bg-slate-700/30 flex items-center justify-center text-4xl">📭</div>
               <div className="text-center">
