@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SESSION_KEY } from "@/lib/auth";
+import { SESSION_KEY } from "@/modules/admin/login/constData/const";
 import { STATS, RECENT_ENQUIRIES, RECENT_STUDENTS, ACTIVITY_FEED, SERVICE_BREAKDOWN, MONTHLY_DATA } from "@/modules/admin/dashboard/constData/const";
 import Sidebar from "@/components/SidebarAdmin";
 

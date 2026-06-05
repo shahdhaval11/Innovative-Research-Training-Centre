@@ -1,6 +1,3 @@
-// ─── app/api/admin/auth/route.ts ──────────────────────────────────────────────
-// Static-credential login API route (Next.js App Router)
-
 import { NextRequest, NextResponse } from "next/server";
 import { verifyCredentials } from "@/lib/auth";
 
@@ -15,7 +12,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = verifyCredentials(email.trim().toLowerCase(), password);
+    const user = await verifyCredentials(email.trim().toLowerCase(), password);
 
     if (!user) {
       return NextResponse.json(

@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SESSION_KEY } from "@/lib/auth";
-import { DEMO_ACCOUNTS } from "@/modules/admin/login/constData/const";
+import { SESSION_KEY, DEMO_ACCOUNTS } from "@/modules/admin/login/constData/const";
 
 export default function AdminLogin() {
   const router = useRouter();
