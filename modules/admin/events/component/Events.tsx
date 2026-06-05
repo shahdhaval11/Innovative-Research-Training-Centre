@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { SESSION_KEY } from "@/modules/admin/login/constData/const";
 import SidebarAdmin from "@/components/SidebarAdmin";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // ─── Admin User type ──────────────────────────────────────────────────────────
 interface AdminUser {
@@ -718,20 +720,6 @@ function DeleteDialog({
   );
 }
 
-// ─── Toast ─────────────────────────────────────────────────────────────────────
-function Toast({ message, type, onDone }: { message: string; type: "success" | "error"; onDone: () => void }) {
-  useEffect(() => {
-    const t = setTimeout(onDone, 3000);
-    return () => clearTimeout(t);
-  }, [onDone]);
-  return (
-    <div className="fixed bottom-6 right-6 z-[60] flex items-center gap-3 bg-[#1e293b] border border-slate-600 rounded-xl px-5 py-3.5 shadow-2xl animate-bounce-once">
-      <span className="text-lg">{type === "success" ? "✅" : "❌"}</span>
-      <p className="text-white text-sm font-semibold">{message}</p>
-    </div>
-  );
-}
-
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function Events() {
   const router = useRouter();
@@ -743,7 +731,6 @@ export default function Events() {
   const [loading,      setLoading]     = useState(false);
   const [modal,        setModal]       = useState<{ mode: ModalMode; event: EventRecord | null } | null>(null);
   const [deleteTarget, setDeleteTarget]= useState<EventRecord | null>(null);
-  const [toast,        setToast]       = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [search,       setSearch]      = useState("");
   const [filterType,   setFilterType]  = useState<EventType | "">("");
   const [filterStatus, setFilterStatus]= useState<EventStatus | "">("");
@@ -763,7 +750,7 @@ export default function Events() {
     fetch("/api/admin/events")
       .then((r) => r.json())
       .then((data) => { if (data.success) setEvents(data.events); })
-      .catch(() => setToast({ message: "Failed to load events.", type: "error" }))
+      .catch(() => toast.error("Failed to load events."))
       .finally(() => setLoading(false));
   }, [user]);
 
@@ -783,7 +770,7 @@ export default function Events() {
     });
 
   const showToast = (message: string, type: "success" | "error" = "success") =>
-    setToast({ message, type });
+    type === "success" ? toast.success(message) : toast.error(message);
 
   const handleSave = async (data: Partial<EventRecord>) => {
     if (modal?.mode === "create") {
@@ -1052,10 +1039,10 @@ export default function Events() {
                             <img
                               src={event.imagePreview}
                               alt={event.title}
-                              className="w-10 h-10 rounded-lg object-cover border border-slate-700 shrink-0"
+                              className="w-16 h-12 rounded-lg object-cover border border-slate-700 shrink-0"
                             />
                           ) : (
-                            <div className="w-10 h-10 rounded-lg bg-[#6366f1]/15 border border-[#6366f1]/25 flex items-center justify-center text-lg shrink-0">
+                            <div className="w-16 h-12 rounded-lg bg-[#6366f1]/15 border border-[#6366f1]/25 flex items-center justify-center text-lg shrink-0">
                               📅
                             </div>
                           )}
@@ -1170,10 +1157,7 @@ export default function Events() {
         />
       )}
 
-      {/* ── Toast ── */}
-      {toast && (
-        <Toast message={toast.message} type={toast.type} onDone={() => setToast(null)} />
-      )}
+      <ToastContainer position="bottom-right" theme="dark" />
     </main>
         </div>
       </div>
