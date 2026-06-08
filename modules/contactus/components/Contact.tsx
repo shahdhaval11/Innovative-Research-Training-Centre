@@ -240,13 +240,50 @@ function ContactFormSection() {
   const [formData, setFormData] = useState({
     name: "", email: "", phone: "", subject: "", service: "", message: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
 
-  const handleSubmit = () => {
-    if (formData.name && formData.email && formData.message) {
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!formData.name.trim())    e.name    = "Full name is required.";
+    if (!formData.email.trim())   e.email   = "Email address is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = "Enter a valid email address.";
+    if (!formData.phone.trim())   e.phone   = "Phone number is required.";
+    if (!formData.subject.trim()) e.subject = "Subject is required.";
+    if (!formData.service)        e.service = "Please select a service.";
+    if (!formData.message.trim()) e.message = "Message is required.";
+    return e;
+  };
+
+  const handleSubmit = async () => {
+    setApiError("");
+    const e = validate();
+    setErrors(e);
+    if (Object.keys(e).length > 0) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/contact/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Something went wrong.");
       setSubmitted(true);
+    } catch (err: unknown) {
+      setApiError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  const fieldClass = (field: string) =>
+    `w-full bg-white border rounded-xl px-4 py-3 text-[#003049] placeholder-[#003049]/30 text-sm focus:outline-none transition-colors ${
+      errors[field] ? "border-[#E76F51] focus:border-[#E76F51]" : "border-[#003049]/15 focus:border-[#F4A261]"
+    }`;
 
   return (
     <section className="bg-white py-20 px-6">
@@ -255,7 +292,7 @@ function ContactFormSection() {
         <div>
           <span className="text-[#F4A261] font-bold text-sm uppercase tracking-widest">Drop Us a Line</span>
           <h2 className="text-4xl font-black text-[#003049] mt-2 mb-3 leading-tight">
-            Send a Message
+            Send Enquiry
           </h2>
           <p className="text-[#003049]/60 text-base mb-8 leading-relaxed">
             Fill in the form below and one of our academic advisors will get back to you within
@@ -265,15 +302,15 @@ function ContactFormSection() {
           {submitted ? (
             <div className="bg-[#003049] rounded-2xl p-10 text-center">
               <div className="text-5xl mb-4">✅</div>
-              <h3 className="text-white font-black text-xl mb-2">Message Sent!</h3>
+              <h3 className="text-white font-black text-xl mb-2">Enquiry Sent!</h3>
               <p className="text-white/70 text-sm leading-relaxed mb-6">
                 Thank you for reaching out. Our team will respond to your enquiry within 24 working hours.
               </p>
               <button
-                onClick={() => { setSubmitted(false); setFormData({ name:"", email:"", phone:"", subject:"", service:"", message:"" }); }}
+                onClick={() => { setSubmitted(false); setFormData({ name:"", email:"", phone:"", subject:"", service:"", message:"" }); setErrors({}); }}
                 className="bg-[#F4A261] text-[#003049] font-bold px-7 py-2.5 rounded-full hover:bg-[#E76F51] transition-colors"
               >
-                Send Another Message
+                Send Another Enquiry
               </button>
             </div>
           ) : (
@@ -288,9 +325,10 @@ function ContactFormSection() {
                     type="text"
                     placeholder="Dr. / Mr. / Ms. Your Name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-white border border-[#003049]/15 rounded-xl px-4 py-3 text-[#003049] placeholder-[#003049]/30 text-sm focus:outline-none focus:border-[#F4A261] transition-colors"
+                    onChange={(e) => { setFormData({ ...formData, name: e.target.value }); setErrors({ ...errors, name: "" }); }}
+                    className={fieldClass("name")}
                   />
+                  {errors.name && <p className="text-[#E76F51] text-xs mt-1">{errors.name}</p>}
                 </div>
                 {/* Email */}
                 <div>
@@ -301,9 +339,10 @@ function ContactFormSection() {
                     type="email"
                     placeholder="you@example.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-white border border-[#003049]/15 rounded-xl px-4 py-3 text-[#003049] placeholder-[#003049]/30 text-sm focus:outline-none focus:border-[#F4A261] transition-colors"
+                    onChange={(e) => { setFormData({ ...formData, email: e.target.value }); setErrors({ ...errors, email: "" }); }}
+                    className={fieldClass("email")}
                   />
+                  {errors.email && <p className="text-[#E76F51] text-xs mt-1">{errors.email}</p>}
                 </div>
               </div>
 
@@ -311,51 +350,54 @@ function ContactFormSection() {
                 {/* Phone */}
                 <div>
                   <label className="text-[#003049] text-xs font-bold uppercase tracking-wide mb-1.5 block">
-                    Phone / WhatsApp
+                    Phone / WhatsApp <span className="text-[#E76F51]">*</span>
                   </label>
                   <input
                     type="tel"
                     placeholder="+91 00000 00000"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full bg-white border border-[#003049]/15 rounded-xl px-4 py-3 text-[#003049] placeholder-[#003049]/30 text-sm focus:outline-none focus:border-[#F4A261] transition-colors"
+                    onChange={(e) => { setFormData({ ...formData, phone: e.target.value }); setErrors({ ...errors, phone: "" }); }}
+                    className={fieldClass("phone")}
                   />
+                  {errors.phone && <p className="text-[#E76F51] text-xs mt-1">{errors.phone}</p>}
                 </div>
                 {/* Service */}
                 <div>
                   <label className="text-[#003049] text-xs font-bold uppercase tracking-wide mb-1.5 block">
-                    Service of Interest
+                    Service of Interest <span className="text-[#E76F51]">*</span>
                   </label>
                   <select
                     value={formData.service}
-                    onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                    className="w-full bg-white border border-[#003049]/15 rounded-xl px-4 py-3 text-[#003049] text-sm focus:outline-none focus:border-[#F4A261] transition-colors"
+                    onChange={(e) => { setFormData({ ...formData, service: e.target.value }); setErrors({ ...errors, service: "" }); }}
+                    className={fieldClass("service")}
                   >
                     <option value="">Select a service...</option>
                     <option>Research Guidance</option>
                     <option>Dissertation / Thesis Support</option>
                     <option>Research Methodology</option>
                     <option>Data Analysis</option>
-                    <option>Writing & Editing Services</option>
+                    <option>Writing &amp; Editing Services</option>
                     <option>Publication Support</option>
                     <option>Training Support</option>
                     <option>Other</option>
                   </select>
+                  {errors.service && <p className="text-[#E76F51] text-xs mt-1">{errors.service}</p>}
                 </div>
               </div>
 
               {/* Subject */}
               <div className="mb-4">
                 <label className="text-[#003049] text-xs font-bold uppercase tracking-wide mb-1.5 block">
-                  Subject
+                  Subject <span className="text-[#E76F51]">*</span>
                 </label>
                 <input
                   type="text"
                   placeholder="e.g. Thesis guidance for PhD in Management"
                   value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full bg-white border border-[#003049]/15 rounded-xl px-4 py-3 text-[#003049] placeholder-[#003049]/30 text-sm focus:outline-none focus:border-[#F4A261] transition-colors"
+                  onChange={(e) => { setFormData({ ...formData, subject: e.target.value }); setErrors({ ...errors, subject: "" }); }}
+                  className={fieldClass("subject")}
                 />
+                {errors.subject && <p className="text-[#E76F51] text-xs mt-1">{errors.subject}</p>}
               </div>
 
               {/* Message */}
@@ -367,16 +409,22 @@ function ContactFormSection() {
                   rows={5}
                   placeholder="Tell us about your research stage, what you need help with, and any specific deadlines..."
                   value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-white border border-[#003049]/15 rounded-xl px-4 py-3 text-[#003049] placeholder-[#003049]/30 text-sm focus:outline-none focus:border-[#F4A261] transition-colors resize-none"
+                  onChange={(e) => { setFormData({ ...formData, message: e.target.value }); setErrors({ ...errors, message: "" }); }}
+                  className={`${fieldClass("message")} resize-none`}
                 />
+                {errors.message && <p className="text-[#E76F51] text-xs mt-1">{errors.message}</p>}
               </div>
+
+              {apiError && (
+                <p className="text-[#E76F51] text-sm text-center mb-4 font-semibold">{apiError}</p>
+              )}
 
               <button
                 onClick={handleSubmit}
-                className="w-full bg-[#003049] text-white font-black py-4 rounded-xl hover:bg-[#02223a] transition-colors duration-200 text-sm shadow-lg"
+                // disabled={loading}
+                className="w-full bg-[#003049] text-white font-black py-4 rounded-xl hover:bg-[#02223a] transition-colors duration-200 text-sm shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Send Message →
+                {loading ? "Sending..." : "Send Enquiry →"}
               </button>
               <p className="text-[#003049]/40 text-xs text-center mt-3">
                 🔒 Your information is 100% confidential and never shared.
