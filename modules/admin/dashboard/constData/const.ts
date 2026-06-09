@@ -57,9 +57,9 @@ export const MONTHLY_DATA = [
 
 export const NAV_ITEMS = [
   { icon: "🏠", label: "Dashboard", "link": "/admin/dashboard", active: true  },
-  { icon: "👥", label: "Events", "link": "/admin/events", active: false },
+  { icon: "📅", label: "Events",    "link": "/admin/events",    active: false },
+  { icon: "💬", label: "Enquiries", "link": "/admin/enquiries", active: false },
 //   { icon: "🎓", label: "Students",     active: false },
-//   { icon: "💬", label: "Enquiries",    active: false },
 //   { icon: "📝", label: "Services",     active: false },
 //   { icon: "📰", label: "Publications", active: false },
 //   { icon: "📚", label: "Courses",      active: false },
