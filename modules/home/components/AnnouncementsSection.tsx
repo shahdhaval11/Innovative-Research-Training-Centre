@@ -1,16 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import EventDetailModal from "./EventDetailModal";
 
 interface EventRecord {
   id: string;
   title: string;
   description: string;
   startDate: string;
+  endDate: string;
   startTime: string;
   endTime: string;
   eventType: string;
+  status: string;
+  imageName: string;
   imagePreview: string;
+  pdfName: string;
+  createdAt: string;
+  attendees: number;
+  venue: string;
+  registrationUrl: string;
 }
 
 const tagColor: Record<string, string> = {
@@ -31,6 +40,7 @@ function formatTime(t: string) {
 
 function AnnouncementsSection() {
   const [events, setEvents] = useState<EventRecord[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/events")
@@ -42,6 +52,10 @@ function AnnouncementsSection() {
   if (events.length === 0) return null;
 
   return (
+    <>
+    {selectedEvent && (
+      <EventDetailModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
+    )}
     <section className="bg-white py-20 px-6">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-10 items-start">
         {/* Heading col */}
@@ -79,6 +93,7 @@ function AnnouncementsSection() {
             return (
               <div
                 key={event.id}
+                onClick={() => setSelectedEvent(event)}
                 className="flex gap-5 items-start bg-[#f7f9fb] border border-[#003049]/8 rounded-2xl p-5 hover:shadow-md transition-shadow duration-200 cursor-pointer group"
               >
                 {/* Thumbnail + Date stacked */}
@@ -129,6 +144,7 @@ function AnnouncementsSection() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 
