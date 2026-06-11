@@ -113,7 +113,7 @@ export default function AdminLogin() {
         {/* Footer note */}
         <div className="relative z-10">
           <p className="text-slate-600 text-xs">
-            © {new Date().getFullYear()} IRTC Admin Panel · Restricted Access
+            © {new Date().getFullYear()} NRTC Admin Panel · Restricted Access
           </p>
         </div>
       </div>

@@ -26,7 +26,7 @@
 //         </div>
 //         {!collapsed && (
 //           <div className="leading-tight overflow-hidden">
-//             <p className="text-white font-bold text-xs tracking-wide truncate">IRTC Admin</p>
+//             <p className="text-white font-bold text-xs tracking-wide truncate">NRTC Admin</p>
 //             <p className="text-[#818cf8] text-[10px] tracking-widest uppercase truncate">Control Panel</p>
 //           </div>
 //         )}
@@ -141,7 +141,7 @@ function SidebarAdmin({
               className="h-10 w-auto object-contain brightness-0 invert shrink-0"
             />
             <div className="leading-tight overflow-hidden">
-              <p className="text-white font-bold text-xs tracking-wide truncate">IRTC Admin</p>
+              <p className="text-white font-bold text-xs tracking-wide truncate">NRTC Admin</p>
               <p className="text-[#818cf8] text-[10px] tracking-widest uppercase truncate">Control Panel</p>
             </div>
           </>

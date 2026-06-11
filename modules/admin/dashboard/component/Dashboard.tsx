@@ -416,7 +416,7 @@ export default function Dashboard() {
 
             {/* Footer */}
             <p className="text-center text-slate-700 text-xs pb-4">
-              IRTC Admin Panel · v1.0 · {new Date().getFullYear()} Nanonova Research & Training Centre
+              NRTC Admin Panel · v1.0 · {new Date().getFullYear()} Nanonova Research & Training Centre
             </p>
           </main>
         </div>

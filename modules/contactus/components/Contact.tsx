@@ -20,7 +20,7 @@ const TESTIMONIALS = [
     degree: "PhD – Life Sciences, IIT Bombay",
     image: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=120&h=120&fit=crop&crop=face",
     quote:
-      "IRTC transformed my research journey. Their thesis guidance was precise, practical, and deeply encouraging. I submitted my dissertation three months ahead of schedule!",
+      "NRTC transformed my research journey. Their thesis guidance was precise, practical, and deeply encouraging. I submitted my dissertation three months ahead of schedule!",
     rating: 5,
     service: "Thesis Support",
   },
@@ -38,7 +38,7 @@ const TESTIMONIALS = [
     degree: "PhD – Computer Science, NIT Calicut",
     image: "https://images.unsplash.com/photo-1598550874175-4d0ef436c909?w=120&h=120&fit=crop&crop=face",
     quote:
-      "My Scopus-indexed paper would not exist without IRTC's publication support. From journal selection to final revision, their team was incredibly professional and responsive.",
+      "My Scopus-indexed paper would not exist without NRTC's publication support. From journal selection to final revision, their team was incredibly professional and responsive.",
     rating: 5,
     service: "Publication Support",
   },
@@ -47,7 +47,7 @@ const TESTIMONIALS = [
     degree: "MBA (Research) – NMIMS Mumbai",
     image: "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=120&h=120&fit=crop&crop=face",
     quote:
-      "I struggled with my research methodology chapter for months. After just two sessions with IRTC's advisor, I had complete clarity. Their structured approach is second to none.",
+      "I struggled with my research methodology chapter for months. After just two sessions with NRTC's advisor, I had complete clarity. Their structured approach is second to none.",
     rating: 5,
     service: "Research Methodology",
   },
@@ -56,7 +56,7 @@ const TESTIMONIALS = [
     degree: "PhD – Education, Pune University",
     image: "https://images.unsplash.com/photo-1624561172888-ac93c696e10c?w=120&h=120&fit=crop&crop=face",
     quote:
-      "The academic writing and editing service helped me improve my language dramatically. My supervisor couldn't believe the improvement in quality between drafts. Thank you, IRTC!",
+      "The academic writing and editing service helped me improve my language dramatically. My supervisor couldn't believe the improvement in quality between drafts. Thank you, NRTC!",
     rating: 5,
     service: "Writing & Editing",
   },
@@ -65,7 +65,7 @@ const TESTIMONIALS = [
     degree: "Post-Doc Researcher, IISER Pune",
     image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=face",
     quote:
-      "IRTC's certificate course on research design gave me the confidence and skills to pursue independent research projects. The faculty are world-class and deeply committed.",
+      "NRTC's certificate course on research design gave me the confidence and skills to pursue independent research projects. The faculty are world-class and deeply committed.",
     rating: 5,
     service: "Training Program",
   },
@@ -447,7 +447,7 @@ function ContactFormSection() {
           <div className="relative rounded-2xl overflow-hidden bg-[#003049]/8 border border-[#003049]/10 h-48 flex items-center justify-center">
             <div className="text-center">
               <div className="text-4xl mb-2">📍</div>
-              <p className="text-[#003049] font-bold text-sm">IRTC Office, Ahmedabad</p>
+              <p className="text-[#003049] font-bold text-sm">NRTC Office, Ahmedabad</p>
               <p className="text-[#003049]/50 text-xs mt-1">204, Academic Tower, SG Highway</p>
               <a
                 href="https://maps.google.com"
@@ -514,7 +514,7 @@ function ContactFormSection() {
           </div>
 
           {/* Working hours */}
-          <div className="bg-[#F4A261] rounded-2xl p-6">
+          {/* <div className="bg-[#F4A261] rounded-2xl p-6">
             <h4 className="text-[#003049] font-black text-base mb-4 flex items-center gap-2">
               <span>⏰</span> Working Hours
             </h4>
@@ -539,7 +539,7 @@ function ContactFormSection() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
@@ -775,7 +775,7 @@ function BottomCTA() {
           Your Academic Success Starts Here
         </h2>
         <p className="text-white/70 text-base max-w-xl mx-auto mb-8 leading-relaxed">
-          Join over 1,200 students who have trusted IRTC to guide them through every stage of their
+          Join over 1,200 students who have trusted NRTC to guide them through every stage of their
           research journey. Book your free consultation today.
         </p>
         <div className="flex flex-wrap gap-4 justify-center">

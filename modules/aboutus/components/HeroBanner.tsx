@@ -20,7 +20,7 @@ function HeroBanner() {
               Who We Are
             </span>
             <h1 className="text-5xl md:text-6xl font-black text-white leading-tight mb-6">
-              About <span className="text-[#F4A261]">IRTC</span>
+              About <span className="text-[#F4A261]">NRTC</span>
             </h1>
             <p className="text-white/70 text-lg leading-relaxed mb-8">
               Nanonova Research & Training Centre is a dedicated academic support platform for

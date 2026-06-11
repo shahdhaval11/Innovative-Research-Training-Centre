@@ -51,7 +51,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     name: "Dr. Priya Sharma",
     degree: "PhD – Life Sciences, IIT Bombay",
-    text: "IRTC's mentorship helped me structure my dissertation in a way I never thought possible. The guidance was precise, practical, and deeply encouraging.",
+    text: "NRTC's mentorship helped me structure my dissertation in a way I never thought possible. The guidance was precise, practical, and deeply encouraging.",
   },
   {
     name: "Rahul Mehta",
@@ -61,7 +61,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     name: "Dr. Anjali Nair",
     degree: "PhD – Computer Science, NIT Calicut",
-    text: "From paper selection to final proofreading, IRTC was there at every step. My Scopus-indexed paper wouldn't exist without their guidance.",
+    text: "From paper selection to final proofreading, NRTC was there at every step. My Scopus-indexed paper wouldn't exist without their guidance.",
   },
 ];
 

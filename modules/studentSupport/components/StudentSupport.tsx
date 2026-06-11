@@ -29,7 +29,7 @@
 //               Student <span className="text-[#F4A261]">Support</span> Services
 //             </h1>
 //             <p className="text-white/70 text-lg leading-relaxed mb-8">
-//               From your first research idea to your final published paper — IRTC offers end-to-end
+//               From your first research idea to your final published paper — NRTC offers end-to-end
 //               academic support across 7 specialised service areas, all tailored to PG & PhD scholars.
 //             </p>
 //             <div className="flex flex-wrap gap-4">
@@ -624,12 +624,12 @@ function ServicesSection() {
                           )}
                         </div>
                       </div>
-                      <a
+                      {/* <a
                         href="/contactus"
                         className="mt-6 block text-center bg-[#003049] text-white font-bold text-sm py-2.5 rounded-xl hover:bg-[#02223a] transition-colors duration-200"
                       >
                         Book a Free Consultation
-                      </a>
+                      </a> */}
                     </div>
                   </div>
 
