@@ -12,40 +12,6 @@ interface AdminUser {
   id: string; name: string; email: string; role: string; avatar: string;
 }
 
-// ─── Topbar (local — same as Dashboard) ──────────────────────────────────────
-function Topbar({ user, onMenuToggle }: { user: AdminUser; onMenuToggle: () => void }) {
-  const now = new Date();
-  const greeting =
-    now.getHours() < 12 ? "Good morning" :
-    now.getHours() < 17 ? "Good afternoon" : "Good evening";
-  return (
-    <header className="bg-[#1e293b] border-b border-slate-700/50 px-6 py-3.5 flex items-center justify-between shrink-0">
-      <div className="flex items-center gap-4">
-        <button onClick={onMenuToggle} className="md:hidden text-slate-400 hover:text-white text-xl">☰</button>
-        <div>
-          <p className="text-white font-bold text-sm">{greeting}, {user.name.split(" ")[0]}! 👋</p>
-          <p className="text-slate-500 text-xs">
-            {now.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-          </p>
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
-        <div className="hidden md:flex items-center gap-2 bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2">
-          <span className="text-slate-500 text-sm">🔍</span>
-          <input type="text" placeholder="Search..." className="bg-transparent text-slate-300 text-xs placeholder-slate-600 outline-none w-32" />
-        </div>
-        <button className="relative w-9 h-9 rounded-xl bg-[#0f172a] border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
-          🔔
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[9px] font-bold flex items-center justify-center">3</span>
-        </button>
-        <div className="w-9 h-9 rounded-xl bg-[#6366f1] flex items-center justify-center font-black text-white text-sm">
-          {user.avatar}
-        </div>
-      </div>
-    </header>
-  );
-}
-
 // ─── Types ────────────────────────────────────────────────────────────────────
 type EventType = "Webinar" | "Workshop" | "Seminar" | "Conference" | "Certificate Course" | "Field Training" | "Other";
 type EventStatus = "Upcoming" | "Ongoing" | "Completed" | "Cancelled";
@@ -64,13 +30,15 @@ interface EventRecord {
   imageName: string;
   imagePreview: string;
   pdfName: string;
+  bannerPath: string;
+  broucherPath: string;
   createdAt: string;
   attendees: number;
   venue: string;
   registrationUrl: string;
 }
 
-interface FormData {
+interface EventFormData {
   title: string;
   description: string;
   startDate: string;
@@ -81,10 +49,11 @@ interface FormData {
   venue: string;
   registrationUrl: string;
   imageName: string;
-  imagePreview: string;
+  imageLocalPreview: string; // blob URL for new image (not persisted)
+  bannerPath: string;        // server path saved in DB
   pdfName: string;
+  broucherPath: string;      // server path saved in DB
 }
-
 
 const EVENT_TYPES: EventType[] = [
   "Webinar", "Workshop", "Seminar", "Conference", "Certificate Course", "Field Training", "Other",
@@ -110,18 +79,14 @@ const TYPE_STYLE: Record<EventType, string> = {
   Other:              "bg-slate-700/50 text-slate-400",
 };
 
-const EMPTY_FORM: FormData = {
+const EMPTY_FORM: EventFormData = {
   title: "", description: "", startDate: "", endDate: "",
   startTime: "", endTime: "", eventType: "", venue: "",
-  registrationUrl: "", imageName: "", imagePreview: "", pdfName: "",
+  registrationUrl: "", imageName: "", imageLocalPreview: "", bannerPath: "", pdfName: "", broucherPath: "",
 };
 
 // ─── Input component ──────────────────────────────────────────────────────────
-function Field({
-  label, required, children,
-}: {
-  label: string; required?: boolean; children: React.ReactNode;
-}) {
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
       <label className="text-slate-400 text-xs font-semibold uppercase tracking-wide">
@@ -151,33 +116,47 @@ function EventModal({
   const imageRef = useRef<HTMLInputElement>(null);
   const pdfRef   = useRef<HTMLInputElement>(null);
 
-  const [form,   setForm]   = useState<FormData>(EMPTY_FORM);
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
-  const [imgDrag, setImgDrag] = useState(false);
-  const [pdfDrag, setPdfDrag] = useState(false);
+  const [form,      setForm]      = useState<EventFormData>(EMPTY_FORM);
+  const [errors,    setErrors]    = useState<Partial<Record<keyof EventFormData, string>>>({});
+  const [imgDrag,   setImgDrag]   = useState(false);
+  const [pdfDrag,   setPdfDrag]   = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [pdfFile,   setPdfFile]   = useState<File | null>(null);
+  const [saving,    setSaving]    = useState(false);
 
   // Prefill form for edit/view
   useEffect(() => {
     if (event && (isEdit || isView)) {
       setForm({
-        title:           event.title,
-        description:     event.description,
-        startDate:       event.startDate,
-        endDate:         event.endDate,
-        startTime:       event.startTime,
-        endTime:         event.endTime,
-        eventType:       event.eventType,
-        venue:           event.venue,
-        registrationUrl: event.registrationUrl,
-        imageName:       event.imageName,
-        imagePreview:    event.imagePreview,
-        pdfName:         event.pdfName,
+        title:             event.title,
+        description:       event.description,
+        startDate:         event.startDate,
+        endDate:           event.endDate,
+        startTime:         event.startTime,
+        endTime:           event.endTime,
+        eventType:         event.eventType,
+        venue:             event.venue,
+        registrationUrl:   event.registrationUrl,
+        imageName:         event.imageName,
+        imageLocalPreview: "",
+        bannerPath:        event.bannerPath,
+        pdfName:           event.pdfName,
+        broucherPath:      event.broucherPath,
       });
     } else {
       setForm(EMPTY_FORM);
     }
+    setImageFile(null);
+    setPdfFile(null);
     setErrors({});
   }, [event, mode, isEdit, isView]);
+
+  // Revoke object URLs on unmount / file change to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (form.imageLocalPreview) URL.revokeObjectURL(form.imageLocalPreview);
+    };
+  }, [form.imageLocalPreview]);
 
   // Escape key closes modal
   useEffect(() => {
@@ -186,7 +165,7 @@ function EventModal({
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  const set = (key: keyof FormData, val: string) =>
+  const set = (key: keyof EventFormData, val: string) =>
     setForm((prev) => ({ ...prev, [key]: val }));
 
   const handleImageFile = (file: File | null | undefined) => {
@@ -199,16 +178,11 @@ function EventModal({
       setErrors((e) => ({ ...e, imageName: "Image must be under 5 MB." }));
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      setForm((prev) => ({
-        ...prev,
-        imageName: file.name,
-        imagePreview: ev.target?.result as string,
-      }));
-      setErrors((e) => ({ ...e, imageName: "" }));
-    };
-    reader.readAsDataURL(file);
+    if (form.imageLocalPreview) URL.revokeObjectURL(form.imageLocalPreview);
+    const localUrl = URL.createObjectURL(file);
+    setImageFile(file);
+    setForm((prev) => ({ ...prev, imageName: file.name, imageLocalPreview: localUrl }));
+    setErrors((e) => ({ ...e, imageName: "" }));
   };
 
   const handlePdfFile = (file: File | null | undefined) => {
@@ -221,12 +195,13 @@ function EventModal({
       setErrors((e) => ({ ...e, pdfName: "PDF must be under 10 MB." }));
       return;
     }
+    setPdfFile(file);
     setForm((prev) => ({ ...prev, pdfName: file.name }));
     setErrors((e) => ({ ...e, pdfName: "" }));
   };
 
   const validate = (): boolean => {
-    const errs: Partial<Record<keyof FormData, string>> = {};
+    const errs: Partial<Record<keyof EventFormData, string>> = {};
     if (!form.title.trim())       errs.title       = "Title is required.";
     if (!form.description.trim()) errs.description = "Description is required.";
     if (!form.startDate)          errs.startDate   = "Start date is required.";
@@ -240,22 +215,56 @@ function EventModal({
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validate()) return;
-    onSave({
-      title:           form.title,
-      description:     form.description,
-      startDate:       form.startDate,
-      endDate:         form.endDate,
-      startTime:       form.startTime,
-      endTime:         form.endTime,
-      eventType:       form.eventType as EventType,
-      venue:           form.venue,
-      registrationUrl: form.registrationUrl,
-      imageName:       form.imageName,
-      imagePreview:    form.imagePreview,
-      pdfName:         form.pdfName,
-    });
+    setSaving(true);
+    try {
+      let bannerPath   = form.bannerPath;
+      let broucherPath = form.broucherPath;
+
+      // Upload banner image if a new file was selected
+      if (imageFile) {
+        const fd = new globalThis.FormData();
+        fd.append("file", imageFile);
+        fd.append("eventTitle", form.title);
+        fd.append("fileType", "banner");
+        const res  = await fetch("/api/admin/events/upload", { method: "POST", body: fd });
+        const json = await res.json();
+        if (!json.success) throw new Error("Image upload failed");
+        bannerPath = json.path;
+      }
+
+      // Upload brochure PDF if a new file was selected
+      if (pdfFile) {
+        const fd = new globalThis.FormData();
+        fd.append("file", pdfFile);
+        fd.append("eventTitle", form.title);
+        fd.append("fileType", "broucher");
+        const res  = await fetch("/api/admin/events/upload", { method: "POST", body: fd });
+        const json = await res.json();
+        if (!json.success) throw new Error("PDF upload failed");
+        broucherPath = json.path;
+      }
+
+      onSave({
+        title:           form.title,
+        description:     form.description,
+        startDate:       form.startDate,
+        endDate:         form.endDate,
+        startTime:       form.startTime,
+        endTime:         form.endTime,
+        eventType:       form.eventType as EventType,
+        venue:           form.venue,
+        registrationUrl: form.registrationUrl,
+        imageName:       form.imageName,
+        pdfName:         form.pdfName,
+        bannerPath,
+        broucherPath,
+      });
+    } catch {
+      toast.error("File upload failed. Please try again.");
+      setSaving(false);
+    }
   };
 
   const formatDate = (d: string) =>
@@ -265,6 +274,9 @@ function EventModal({
     const [h, m] = t.split(":").map(Number);
     return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`;
   };
+
+  // The src to use for image preview: new local blob URL takes priority over existing server path
+  const previewSrc = form.imageLocalPreview || form.bannerPath;
 
   const modalTitle =
     isCreate ? "Create New Event" :
@@ -312,15 +324,23 @@ function EventModal({
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
 
           {/* ─ View mode: image banner ─ */}
-          {isView && form.imagePreview && (
+          {isView && form.bannerPath && (
             <div className="relative rounded-xl overflow-hidden h-44 border border-slate-700/50">
-              <img src={form.imagePreview} alt={form.title} className="w-full h-full object-cover" />
+              <img src={form.bannerPath} alt={form.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1e293b]/80 to-transparent" />
               <div className="absolute bottom-3 left-4">
                 <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${TYPE_STYLE[form.eventType as EventType]}`}>
                   {form.eventType}
                 </span>
               </div>
+              <a
+                href={form.bannerPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+              >
+                🖼️ View Full
+              </a>
             </div>
           )}
 
@@ -362,70 +382,45 @@ function EventModal({
 
           {/* ─ Date & Time grid ─ */}
           <div className="grid grid-cols-2 gap-4">
-            {/* Start Date */}
             <Field label="Start Date" required>
               {isView ? (
                 <p className="text-slate-200 text-sm font-medium">{formatDate(form.startDate)}</p>
               ) : (
                 <>
-                  <input
-                    type="date"
-                    value={form.startDate}
-                    onChange={(e) => set("startDate", e.target.value)}
-                    className={`${inputCls} [color-scheme:dark]`}
-                  />
+                  <input type="date" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} className={`${inputCls} [color-scheme:dark]`} />
                   {errors.startDate && <p className="text-red-400 text-xs">{errors.startDate}</p>}
                 </>
               )}
             </Field>
 
-            {/* End Date */}
             <Field label="End Date" required>
               {isView ? (
                 <p className="text-slate-200 text-sm font-medium">{formatDate(form.endDate)}</p>
               ) : (
                 <>
-                  <input
-                    type="date"
-                    value={form.endDate}
-                    min={form.startDate}
-                    onChange={(e) => set("endDate", e.target.value)}
-                    className={`${inputCls} [color-scheme:dark]`}
-                  />
+                  <input type="date" value={form.endDate} min={form.startDate} onChange={(e) => set("endDate", e.target.value)} className={`${inputCls} [color-scheme:dark]`} />
                   {errors.endDate && <p className="text-red-400 text-xs">{errors.endDate}</p>}
                 </>
               )}
             </Field>
 
-            {/* Start Time */}
             <Field label="Start Time" required>
               {isView ? (
                 <p className="text-slate-200 text-sm font-medium">{formatTime(form.startTime)}</p>
               ) : (
                 <>
-                  <input
-                    type="time"
-                    value={form.startTime}
-                    onChange={(e) => set("startTime", e.target.value)}
-                    className={`${inputCls} [color-scheme:dark]`}
-                  />
+                  <input type="time" value={form.startTime} onChange={(e) => set("startTime", e.target.value)} className={`${inputCls} [color-scheme:dark]`} />
                   {errors.startTime && <p className="text-red-400 text-xs">{errors.startTime}</p>}
                 </>
               )}
             </Field>
 
-            {/* End Time */}
             <Field label="End Time" required>
               {isView ? (
                 <p className="text-slate-200 text-sm font-medium">{formatTime(form.endTime)}</p>
               ) : (
                 <>
-                  <input
-                    type="time"
-                    value={form.endTime}
-                    onChange={(e) => set("endTime", e.target.value)}
-                    className={`${inputCls} [color-scheme:dark]`}
-                  />
+                  <input type="time" value={form.endTime} onChange={(e) => set("endTime", e.target.value)} className={`${inputCls} [color-scheme:dark]`} />
                   {errors.endTime && <p className="text-red-400 text-xs">{errors.endTime}</p>}
                 </>
               )}
@@ -441,15 +436,9 @@ function EventModal({
                 </span>
               ) : (
                 <>
-                  <select
-                    value={form.eventType}
-                    onChange={(e) => set("eventType", e.target.value)}
-                    className={`${inputCls} appearance-none cursor-pointer`}
-                  >
+                  <select value={form.eventType} onChange={(e) => set("eventType", e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
                     <option value="" disabled className="bg-[#1e293b]">Select event type...</option>
-                    {EVENT_TYPES.map((t) => (
-                      <option key={t} value={t} className="bg-[#1e293b]">{t}</option>
-                    ))}
+                    {EVENT_TYPES.map((t) => <option key={t} value={t} className="bg-[#1e293b]">{t}</option>)}
                   </select>
                   {errors.eventType && <p className="text-red-400 text-xs">{errors.eventType}</p>}
                 </>
@@ -460,13 +449,7 @@ function EventModal({
               {isView ? (
                 <p className="text-slate-200 text-sm font-medium">{form.venue || "—"}</p>
               ) : (
-                <input
-                  type="text"
-                  placeholder="e.g. Online (Zoom) / IRTC Hall, Ahmedabad"
-                  value={form.venue}
-                  onChange={(e) => set("venue", e.target.value)}
-                  className={inputCls}
-                />
+                <input type="text" placeholder="e.g. Online (Zoom) / NRTC Hall, Ahmedabad" value={form.venue} onChange={(e) => set("venue", e.target.value)} className={inputCls} />
               )}
             </Field>
           </div>
@@ -475,35 +458,29 @@ function EventModal({
           <Field label="Registration URL">
             {isView ? (
               form.registrationUrl ? (
-                <a
-                  href={form.registrationUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#818cf8] text-sm underline underline-offset-2 break-all hover:text-[#6366f1] transition-colors"
-                >
+                <a href={form.registrationUrl} target="_blank" rel="noopener noreferrer" className="text-[#818cf8] text-sm underline underline-offset-2 break-all hover:text-[#6366f1] transition-colors">
                   {form.registrationUrl}
                 </a>
               ) : (
                 <p className="text-slate-500 text-sm italic">No registration URL provided</p>
               )
             ) : (
-              <input
-                type="url"
-                placeholder="https://example.com/register"
-                value={form.registrationUrl}
-                onChange={(e) => set("registrationUrl", e.target.value)}
-                className={inputCls}
-              />
+              <input type="url" placeholder="https://example.com/register" value={form.registrationUrl} onChange={(e) => set("registrationUrl", e.target.value)} className={inputCls} />
             )}
           </Field>
 
           {/* ─ Image Upload ─ */}
           <Field label="Event Banner Image">
             {isView ? (
-              form.imageName ? (
-                <div className="flex items-center gap-3 bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3">
-                  <span className="text-xl">🖼️</span>
-                  <span className="text-slate-300 text-sm">{form.imageName}</span>
+              form.bannerPath ? (
+                <div className="flex items-center justify-between bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">🖼️</span>
+                    <span className="text-slate-300 text-sm">{form.imageName || "Banner Image"}</span>
+                  </div>
+                  <a href={form.bannerPath} target="_blank" rel="noopener noreferrer" className="text-[#818cf8] text-xs font-bold hover:text-[#6366f1] transition-colors">
+                    View →
+                  </a>
                 </div>
               ) : (
                 <p className="text-slate-500 text-sm italic">No image uploaded</p>
@@ -512,23 +489,20 @@ function EventModal({
               <div
                 onDragOver={(e) => { e.preventDefault(); setImgDrag(true); }}
                 onDragLeave={() => setImgDrag(false)}
-                onDrop={(e) => {
-                  e.preventDefault(); setImgDrag(false);
-                  handleImageFile(e.dataTransfer.files[0]);
-                }}
-                className={`relative border-2 border-dashed rounded-xl transition-all duration-200 ${
-                  imgDrag
-                    ? "border-[#6366f1] bg-[#6366f1]/5"
-                    : "border-slate-700 hover:border-slate-600"
-                }`}
+                onDrop={(e) => { e.preventDefault(); setImgDrag(false); handleImageFile(e.dataTransfer.files[0]); }}
+                className={`relative border-2 border-dashed rounded-xl transition-all duration-200 ${imgDrag ? "border-[#6366f1] bg-[#6366f1]/5" : "border-slate-700 hover:border-slate-600"}`}
               >
-                {form.imagePreview ? (
+                {previewSrc ? (
                   <div className="relative h-36 rounded-xl overflow-hidden">
-                    <img src={form.imagePreview} alt="preview" className="w-full h-full object-cover" />
+                    <img src={previewSrc} alt="preview" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                       <button
                         type="button"
-                        onClick={() => { setForm((p) => ({ ...p, imageName: "", imagePreview: "" })); }}
+                        onClick={() => {
+                          if (form.imageLocalPreview) URL.revokeObjectURL(form.imageLocalPreview);
+                          setImageFile(null);
+                          setForm((p) => ({ ...p, imageName: "", imageLocalPreview: "", bannerPath: "" }));
+                        }}
                         className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-red-600 transition-colors"
                       >
                         🗑️ Remove
@@ -539,22 +513,13 @@ function EventModal({
                     </div>
                   </div>
                 ) : (
-                  <div
-                    className="flex flex-col items-center justify-center gap-2 py-8 cursor-pointer"
-                    onClick={() => imageRef.current?.click()}
-                  >
+                  <div className="flex flex-col items-center justify-center gap-2 py-8 cursor-pointer" onClick={() => imageRef.current?.click()}>
                     <div className="w-12 h-12 rounded-xl bg-slate-700/50 flex items-center justify-center text-2xl">🖼️</div>
                     <p className="text-slate-400 text-sm font-medium">Drop image here or <span className="text-[#818cf8]">browse</span></p>
                     <p className="text-slate-600 text-xs">JPG, PNG, WEBP · Max 5 MB</p>
                   </div>
                 )}
-                <input
-                  ref={imageRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleImageFile(e.target.files?.[0])}
-                />
+                <input ref={imageRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleImageFile(e.target.files?.[0])} />
               </div>
             )}
             {errors.imageName && <p className="text-red-400 text-xs">{errors.imageName}</p>}
@@ -563,15 +528,15 @@ function EventModal({
           {/* ─ PDF Upload ─ */}
           <Field label="Event Brochure / PDF">
             {isView ? (
-              form.pdfName ? (
+              form.broucherPath ? (
                 <div className="flex items-center justify-between bg-[#0f172a] border border-slate-700 rounded-xl px-4 py-3">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">📄</span>
-                    <span className="text-slate-300 text-sm">{form.pdfName}</span>
+                    <span className="text-slate-300 text-sm">{form.pdfName || "Brochure"}</span>
                   </div>
-                  <button className="text-[#818cf8] text-xs font-bold hover:text-[#6366f1] transition-colors">
-                    Download →
-                  </button>
+                  <a href={form.broucherPath} target="_blank" rel="noopener noreferrer" className="text-[#818cf8] text-xs font-bold hover:text-[#6366f1] transition-colors">
+                    View →
+                  </a>
                 </div>
               ) : (
                 <p className="text-slate-500 text-sm italic">No PDF uploaded</p>
@@ -580,15 +545,8 @@ function EventModal({
               <div
                 onDragOver={(e) => { e.preventDefault(); setPdfDrag(true); }}
                 onDragLeave={() => setPdfDrag(false)}
-                onDrop={(e) => {
-                  e.preventDefault(); setPdfDrag(false);
-                  handlePdfFile(e.dataTransfer.files[0]);
-                }}
-                className={`border-2 border-dashed rounded-xl transition-all duration-200 ${
-                  pdfDrag
-                    ? "border-[#6366f1] bg-[#6366f1]/5"
-                    : "border-slate-700 hover:border-slate-600"
-                }`}
+                onDrop={(e) => { e.preventDefault(); setPdfDrag(false); handlePdfFile(e.dataTransfer.files[0]); }}
+                className={`border-2 border-dashed rounded-xl transition-all duration-200 ${pdfDrag ? "border-[#6366f1] bg-[#6366f1]/5" : "border-slate-700 hover:border-slate-600"}`}
               >
                 {form.pdfName ? (
                   <div className="flex items-center justify-between px-4 py-4">
@@ -596,34 +554,25 @@ function EventModal({
                       <div className="w-10 h-10 rounded-lg bg-red-500/15 border border-red-500/25 flex items-center justify-center text-lg">📄</div>
                       <div>
                         <p className="text-slate-300 text-sm font-medium">{form.pdfName}</p>
-                        <p className="text-slate-500 text-xs">PDF uploaded</p>
+                        <p className="text-slate-500 text-xs">PDF {pdfFile ? "ready to upload" : "uploaded"}</p>
                       </div>
                     </div>
                     <button
                       type="button"
-                      onClick={() => setForm((p) => ({ ...p, pdfName: "" }))}
+                      onClick={() => { setPdfFile(null); setForm((p) => ({ ...p, pdfName: "", broucherPath: "" })); }}
                       className="text-red-400 hover:text-red-300 text-xs font-bold transition-colors"
                     >
                       Remove
                     </button>
                   </div>
                 ) : (
-                  <div
-                    className="flex flex-col items-center justify-center gap-2 py-6 cursor-pointer"
-                    onClick={() => pdfRef.current?.click()}
-                  >
+                  <div className="flex flex-col items-center justify-center gap-2 py-6 cursor-pointer" onClick={() => pdfRef.current?.click()}>
                     <div className="w-12 h-12 rounded-xl bg-slate-700/50 flex items-center justify-center text-2xl">📄</div>
                     <p className="text-slate-400 text-sm font-medium">Drop PDF here or <span className="text-[#818cf8]">browse</span></p>
                     <p className="text-slate-600 text-xs">PDF only · Max 10 MB</p>
                   </div>
                 )}
-                <input
-                  ref={pdfRef}
-                  type="file"
-                  accept=".pdf,application/pdf"
-                  className="hidden"
-                  onChange={(e) => handlePdfFile(e.target.files?.[0])}
-                />
+                <input ref={pdfRef} type="file" accept=".pdf,application/pdf" className="hidden" onChange={(e) => handlePdfFile(e.target.files?.[0])} />
               </div>
             )}
             {errors.pdfName && <p className="text-red-400 text-xs">{errors.pdfName}</p>}
@@ -633,7 +582,7 @@ function EventModal({
           {isView && event && (
             <div className="grid grid-cols-3 gap-4 bg-[#0f172a] border border-slate-700/50 rounded-xl p-4">
               {[
-                { label: "Attendees",  value: String(event.attendees) },
+                { label: "Attendees", value: String(event.attendees) },
                 { label: "Created",   value: formatDate(event.createdAt) },
                 { label: "Event ID",  value: event.id },
               ].map((m) => (
@@ -651,15 +600,23 @@ function EventModal({
           <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-700/50 shrink-0">
             <button
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-slate-600 text-slate-400 hover:text-white hover:border-slate-500 text-sm font-semibold transition-colors"
+              disabled={saving}
+              className="px-5 py-2.5 rounded-xl border border-slate-600 text-slate-400 hover:text-white hover:border-slate-500 text-sm font-semibold transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
-              className="px-6 py-2.5 rounded-xl bg-[#6366f1] hover:bg-[#4f46e5] text-white text-sm font-black transition-colors shadow-lg"
+              disabled={saving}
+              className="px-6 py-2.5 rounded-xl bg-[#6366f1] hover:bg-[#4f46e5] text-white text-sm font-black transition-colors shadow-lg disabled:opacity-60 flex items-center gap-2"
             >
-              {isCreate ? "Create Event" : "Save Changes"}
+              {saving && (
+                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+              )}
+              {saving ? "Saving…" : isCreate ? "Create Event" : "Save Changes"}
             </button>
           </div>
         )}
@@ -697,20 +654,14 @@ function DeleteDialog({
             <h3 className="text-white font-black text-xl mb-2">Delete Event?</h3>
             <p className="text-slate-400 text-sm leading-relaxed">
               Are you sure you want to delete <span className="text-white font-bold">"{event.title}"</span>?
-              This action cannot be undone.
+              This will also remove the banner image and brochure PDF from the server.
             </p>
           </div>
           <div className="flex gap-3 w-full">
-            <button
-              onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-slate-600 text-slate-400 hover:text-white hover:border-slate-500 text-sm font-semibold transition-colors"
-            >
+            <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-slate-600 text-slate-400 hover:text-white hover:border-slate-500 text-sm font-semibold transition-colors">
               Cancel
             </button>
-            <button
-              onClick={onConfirm}
-              className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-black transition-colors"
-            >
+            <button onClick={onConfirm} className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-black transition-colors">
               Yes, Delete
             </button>
           </div>
@@ -884,8 +835,6 @@ export default function Events() {
 
         {/* ── Main content ── */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* <Topbar user={user} onMenuToggle={() => setMobileMenu(true)} /> */}
-
           <main className="flex-1 overflow-y-auto text-white">
 
       {/* ── Page Header ── */}
@@ -927,7 +876,6 @@ export default function Events() {
 
         {/* ── Filters ── */}
         <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl px-5 py-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-          {/* Search */}
           <div className="relative flex-1 max-w-xs">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">🔍</span>
             <input
@@ -940,43 +888,24 @@ export default function Events() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {/* Type filter */}
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value as EventType | "")}
-              className="bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-slate-300 text-xs focus:outline-none focus:border-[#6366f1] transition-colors"
-            >
+            <select value={filterType} onChange={(e) => setFilterType(e.target.value as EventType | "")} className="bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-slate-300 text-xs focus:outline-none focus:border-[#6366f1] transition-colors">
               <option value="">All Types</option>
               {EVENT_TYPES.map((t) => <option key={t} value={t} className="bg-[#1e293b]">{t}</option>)}
             </select>
 
-            {/* Status filter */}
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as EventStatus | "")}
-              className="bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-slate-300 text-xs focus:outline-none focus:border-[#6366f1] transition-colors"
-            >
+            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as EventStatus | "")} className="bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-slate-300 text-xs focus:outline-none focus:border-[#6366f1] transition-colors">
               <option value="">All Status</option>
               {STATUS_OPTIONS.map((s) => <option key={s} value={s} className="bg-[#1e293b]">{s}</option>)}
             </select>
 
-            {/* Sort */}
-            <select
-              value={filterSort}
-              onChange={(e) => setFilterSort(e.target.value as typeof filterSort)}
-              className="bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-slate-300 text-xs focus:outline-none focus:border-[#6366f1] transition-colors"
-            >
+            <select value={filterSort} onChange={(e) => setFilterSort(e.target.value as typeof filterSort)} className="bg-[#0f172a] border border-slate-700 rounded-xl px-3 py-2 text-slate-300 text-xs focus:outline-none focus:border-[#6366f1] transition-colors">
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
               <option value="title">A → Z</option>
             </select>
 
-            {/* Clear */}
             {(search || filterType || filterStatus) && (
-              <button
-                onClick={() => { setSearch(""); setFilterType(""); setFilterStatus(""); }}
-                className="text-red-400 hover:text-red-300 text-xs font-bold px-3 py-2 rounded-xl border border-red-500/30 hover:bg-red-500/10 transition-all"
-              >
+              <button onClick={() => { setSearch(""); setFilterType(""); setFilterStatus(""); }} className="text-red-400 hover:text-red-300 text-xs font-bold px-3 py-2 rounded-xl border border-red-500/30 hover:bg-red-500/10 transition-all">
                 ✕ Clear
               </button>
             )}
@@ -1003,10 +932,7 @@ export default function Events() {
                 </p>
               </div>
               {!search && !filterType && !filterStatus && (
-                <button
-                  onClick={() => setModal({ mode: "create", event: null })}
-                  className="bg-[#6366f1] hover:bg-[#4f46e5] text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors"
-                >
+                <button onClick={() => setModal({ mode: "create", event: null })} className="bg-[#6366f1] hover:bg-[#4f46e5] text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors">
                   ➕ Create Event
                 </button>
               )}
@@ -1025,19 +951,15 @@ export default function Events() {
                 </thead>
                 <tbody>
                   {filtered.map((event, idx) => (
-                    <tr
-                      key={event.id}
-                      className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors group"
-                    >
-                      {/* # */}
+                    <tr key={event.id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors group">
                       <td className="px-4 py-3.5 text-slate-500 text-xs">{idx + 1}</td>
 
                       {/* Event */}
                       <td className="px-4 py-3.5 min-w-[200px]">
                         <div className="flex items-center gap-3">
-                          {event.imagePreview ? (
+                          {(event.bannerPath || event.imagePreview) ? (
                             <img
-                              src={event.imagePreview}
+                              src={event.bannerPath || event.imagePreview}
                               alt={event.title}
                               className="w-16 h-12 rounded-lg object-cover border border-slate-700 shrink-0"
                             />
@@ -1091,30 +1013,13 @@ export default function Events() {
                       {/* Actions */}
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-1.5">
-                          {/* View */}
-                          <button
-                            onClick={() => setModal({ mode: "view", event })}
-                            title="View Details"
-                            className="w-8 h-8 rounded-lg bg-slate-700/40 hover:bg-[#0ea5e9]/20 border border-transparent hover:border-[#0ea5e9]/30 text-slate-400 hover:text-[#38bdf8] flex items-center justify-center text-sm transition-all"
-                          >
+                          <button onClick={() => setModal({ mode: "view", event })} title="View Details" className="w-8 h-8 rounded-lg bg-slate-700/40 hover:bg-[#0ea5e9]/20 border border-transparent hover:border-[#0ea5e9]/30 text-slate-400 hover:text-[#38bdf8] flex items-center justify-center text-sm transition-all">
                             👁️
                           </button>
-
-                          {/* Edit */}
-                          <button
-                            onClick={() => setModal({ mode: "edit", event })}
-                            title="Edit Event"
-                            className="w-8 h-8 rounded-lg bg-slate-700/40 hover:bg-[#6366f1]/20 border border-transparent hover:border-[#6366f1]/30 text-slate-400 hover:text-[#818cf8] flex items-center justify-center text-sm transition-all"
-                          >
+                          <button onClick={() => setModal({ mode: "edit", event })} title="Edit Event" className="w-8 h-8 rounded-lg bg-slate-700/40 hover:bg-[#6366f1]/20 border border-transparent hover:border-[#6366f1]/30 text-slate-400 hover:text-[#818cf8] flex items-center justify-center text-sm transition-all">
                             ✏️
                           </button>
-
-                          {/* Delete */}
-                          <button
-                            onClick={() => setDeleteTarget(event)}
-                            title="Delete Event"
-                            className="w-8 h-8 rounded-lg bg-slate-700/40 hover:bg-red-500/15 border border-transparent hover:border-red-500/30 text-slate-400 hover:text-red-400 flex items-center justify-center text-sm transition-all"
-                          >
+                          <button onClick={() => setDeleteTarget(event)} title="Delete Event" className="w-8 h-8 rounded-lg bg-slate-700/40 hover:bg-red-500/15 border border-transparent hover:border-red-500/30 text-slate-400 hover:text-red-400 flex items-center justify-center text-sm transition-all">
                             🗑️
                           </button>
                         </div>
@@ -1133,7 +1038,7 @@ export default function Events() {
                 Showing <span className="text-slate-300 font-semibold">{filtered.length}</span> of{" "}
                 <span className="text-slate-300 font-semibold">{events.length}</span> events
               </p>
-              <p className="text-slate-600 text-xs">IRTC Event Management Module</p>
+              <p className="text-slate-600 text-xs">NRTC Event Management Module</p>
             </div>
           )}
         </div>

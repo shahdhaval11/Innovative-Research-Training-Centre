@@ -14,6 +14,8 @@ export interface IEvent extends Document {
   imageName: string;
   imagePreview: string;
   pdfName: string;
+  bannerPath: string;
+  broucherPath: string;
   attendees: number;
 }
 
@@ -32,6 +34,8 @@ const EventSchema = new Schema<IEvent>(
     imageName:       { type: String, default: "" },
     imagePreview:    { type: String, default: "" },
     pdfName:         { type: String, default: "" },
+    bannerPath:      { type: String, default: "" },
+    broucherPath:    { type: String, default: "" },
     attendees:       { type: Number, default: 0 },
   },
   { timestamps: true, collection: "nano_events" }

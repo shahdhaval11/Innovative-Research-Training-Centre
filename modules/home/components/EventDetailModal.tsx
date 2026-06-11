@@ -15,6 +15,8 @@ interface EventRecord {
   imageName: string;
   imagePreview: string;
   pdfName: string;
+  bannerPath: string;
+  broucherPath: string;
   createdAt: string;
   attendees: number;
   venue: string;
@@ -85,10 +87,10 @@ export default function EventDetailModal({ event, onClose }: Props) {
     >
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header image */}
-        {event.imagePreview ? (
+        {(event.bannerPath || event.imagePreview) ? (
           <div className="relative h-56 rounded-t-3xl overflow-hidden">
             <img
-              src={event.imagePreview}
+              src={encodeURI(event.bannerPath || event.imagePreview)}
               alt={event.title}
               className="w-full h-full object-cover"
             />
@@ -192,15 +194,19 @@ export default function EventDetailModal({ event, onClose }: Props) {
                 <span className="text-base">→</span>
               </a>
             )}
-            {event.pdfName && (
+            {event.broucherPath ? (
               <a
-                href={event.pdfName}
+                href={encodeURI(event.broucherPath)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-[#003049] hover:bg-[#02223a] text-white font-bold px-6 py-3 rounded-full transition-colors duration-200"
               >
                 📄 View Brochure
               </a>
+            ) : (
+              <span className="inline-flex items-center gap-2 border border-[#003049]/15 text-[#003049]/30 font-semibold px-6 py-3 rounded-full cursor-not-allowed text-sm">
+                📄 No Brochure
+              </span>
             )}
             <button
               onClick={onClose}

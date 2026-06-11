@@ -21,6 +21,8 @@ export async function GET() {
       imageName:       e.imageName ?? "",
       imagePreview:    e.imagePreview ?? "",
       pdfName:         e.pdfName ?? "",
+      bannerPath:      e.bannerPath ?? "",
+      broucherPath:    e.broucherPath ?? "",
       attendees:       e.attendees ?? 0,
       createdAt:       e.createdAt instanceof Date
                          ? e.createdAt.toISOString().split("T")[0]
@@ -48,8 +50,10 @@ export async function POST(req: NextRequest) {
       venue:           body.venue           ?? "",
       registrationUrl: body.registrationUrl ?? "",
       imageName:       body.imageName       ?? "",
-      imagePreview:    body.imagePreview    ?? "",
+      imagePreview:    "",
       pdfName:         body.pdfName         ?? "",
+      bannerPath:      body.bannerPath      ?? "",
+      broucherPath:    body.broucherPath    ?? "",
       attendees:       0,
     });
     const event = {
@@ -67,6 +71,8 @@ export async function POST(req: NextRequest) {
       imageName:       doc.imageName,
       imagePreview:    doc.imagePreview,
       pdfName:         doc.pdfName,
+      bannerPath:      doc.bannerPath,
+      broucherPath:    doc.broucherPath,
       attendees:       doc.attendees,
       createdAt:       (doc as any).createdAt instanceof Date
                          ? (doc as any).createdAt.toISOString().split("T")[0]

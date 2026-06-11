@@ -16,6 +16,8 @@ interface EventRecord {
   imageName: string;
   imagePreview: string;
   pdfName: string;
+  bannerPath: string;
+  broucherPath: string;
   createdAt: string;
   attendees: number;
   venue: string;
@@ -98,9 +100,9 @@ function AnnouncementsSection() {
               >
                 {/* Thumbnail + Date stacked */}
                 <div className="shrink-0 flex flex-col items-center gap-2">
-                  {event.imagePreview ? (
+                  {(event.bannerPath || event.imagePreview) ? (
                     <img
-                      src={event.imagePreview}
+                      src={encodeURI(event.bannerPath || event.imagePreview)}
                       alt={event.title}
                       className="w-20 h-20 rounded-xl object-cover border border-[#003049]/10"
                     />
