@@ -122,10 +122,10 @@ function HeroBanner() {
         {/* Quick contact chips */}
         <div className="flex flex-wrap justify-center gap-3">
           {[
-            { icon: "📞", label: "+91 98765 43210" },
+            { icon: "📞", label: "+91 82001 60169" },
             { icon: "📧", label: "contact@irtcentre.in" },
             { icon: "💬", label: "Live Chat Available" },
-            { icon: "📍", label: "Ahmedabad, Gujarat" },
+            { icon: "📍", label: "Surat, Gujarat" },
           ].map((c) => (
             <div
               key={c.label}
@@ -147,7 +147,7 @@ function ContactCardsRow() {
     {
       icon: "📞",
       title: "Phone & WhatsApp",
-      lines: ["+91 98765 43210", "+91 79 4000 1234"],
+      lines: ["+91 82001 60169"],
       action: "Call Now",
       href: "tel:+919876543210",
       bg: false,
@@ -447,8 +447,8 @@ function ContactFormSection() {
           <div className="relative rounded-2xl overflow-hidden bg-[#003049]/8 border border-[#003049]/10 h-48 flex items-center justify-center">
             <div className="text-center">
               <div className="text-4xl mb-2">📍</div>
-              <p className="text-[#003049] font-bold text-sm">NRTC Office, Ahmedabad</p>
-              <p className="text-[#003049]/50 text-xs mt-1">204, Academic Tower, SG Highway</p>
+              <p className="text-[#003049] font-bold text-sm">NRTC Office, Surat</p>
+              <p className="text-[#003049]/50 text-xs mt-1">Coming Soon..</p>
               <a
                 href="https://maps.google.com"
                 target="_blank"
@@ -463,9 +463,9 @@ function ContactFormSection() {
           {/* Address details */}
           <div className="grid sm:grid-cols-2 gap-4">
             {[
-              { icon: "🏢", label: "Address", val: "204, Academic Tower, SG Highway, Ahmedabad – 380054, Gujarat" },
+              { icon: "🏢", label: "Address", val: "Coming Soon.." },
               { icon: "🌐", label: "Website", val: "www.irtcentre.in" },
-              { icon: "📞", label: "Phone", val: "+91 98765 43210\n+91 79 4000 1234" },
+              { icon: "📞", label: "Phone", val: "+91 82001 60169" },
               { icon: "📧", label: "Email", val: "contact@irtcentre.in\nsupport@irtcentre.in" },
             ].map((item) => (
               <div
@@ -803,7 +803,7 @@ export default function Contact() {
     <main className="font-sans">
       <Navbar />
       <HeroBanner />
-      <ContactCardsRow />
+      {/* <ContactCardsRow /> */}
       <ContactFormSection />
       <TestimonialsSection />
       <FAQSection />

@@ -449,7 +449,13 @@ function EventModal({
               {isView ? (
                 <p className="text-slate-200 text-sm font-medium">{form.venue || "—"}</p>
               ) : (
-                <input type="text" placeholder="e.g. Online (Zoom) / NRTC Hall, Ahmedabad" value={form.venue} onChange={(e) => set("venue", e.target.value)} className={inputCls} />
+                <input
+                  type="text"
+                  placeholder="e.g. Online (Zoom) / NRTC Hall, Ahmedabad"
+                  value={form.venue}
+                  onChange={(e) => set("venue", e.target.value)}
+                  className={inputCls}
+                />
               )}
             </Field>
           </div>

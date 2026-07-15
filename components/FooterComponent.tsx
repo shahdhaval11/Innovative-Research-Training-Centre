@@ -45,7 +45,7 @@ function Footer() {
         <div>
           <p className="text-white font-bold mb-4 text-sm uppercase tracking-wide">Contact Us</p>
           <p className="text-sm mb-2">📧 contact@irtcentre.in</p>
-          <p className="text-sm mb-2">📞 +91 98765 43210</p>
+          <p className="text-sm mb-2">📞 +91 82001 60169</p>
           <p className="text-sm mb-5">📍 Surat, Gujarat, India</p>
           <div className="flex gap-3">
             {["LinkedIn", "Twitter", "YouTube"].map((s) => (
