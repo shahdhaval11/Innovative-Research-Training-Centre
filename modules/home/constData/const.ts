@@ -5,7 +5,7 @@ export const SLIDES = [
   {
     url: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=1400&q=80",
     heading: "Empowering Academic Excellence",
-    sub: "Dedicated support for PG & PhD scholars at every stage of their research journey.",
+    sub: "Dedicated support for UG, PG & PhD scholars at every stage of their research journey.",
   },
   {
     url: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=1400&q=80",

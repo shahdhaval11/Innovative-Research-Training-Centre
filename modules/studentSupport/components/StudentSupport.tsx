@@ -411,7 +411,7 @@ function HeroBanner() {
             </h1>
             <p className="text-white/70 text-lg leading-relaxed mb-8">
               From your first research idea to your final published paper — NanoNova offers end-to-end
-              academic support across 7 specialised service areas, all tailored to PG &amp; PhD scholars.
+              academic support across 7 specialised service areas, all tailored to UG, PG &amp; PhD scholars.
             </p>
             <div className="flex flex-wrap gap-4">
               <a
@@ -538,13 +538,13 @@ function ServicesSection() {
               <div className="text-2xl mb-2">💬</div>
               <p className="text-[#003049] font-black text-sm mb-1">Not sure where to start?</p>
               <p className="text-[#003049]/70 text-xs leading-relaxed mb-4">
-                Book a free 30-minute consultation with an academic advisor.
+                Contact for a free 30-minute consultation with an academic advisor.
               </p>
               <a
                 href="/contactus"
                 className="block text-center bg-[#003049] text-white font-bold text-xs py-2.5 rounded-xl hover:bg-[#02223a] transition-colors duration-200"
               >
-                Book Free Session
+                Contact for Free Session
               </a>
             </div>
           </div>
@@ -759,7 +759,7 @@ function CTABanner() {
             href="/contactus"
             className="bg-[#F4A261] text-[#003049] font-black px-9 py-3.5 rounded-full hover:bg-[#E76F51] transition-colors duration-200 shadow-lg"
           >
-            Book a Free Consultation
+            Contact for a Free Consultation
           </a>
           <a
             href="/courses"

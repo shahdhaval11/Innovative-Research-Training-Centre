@@ -21,7 +21,7 @@ function MissionVisionSection() {
               </div>
               <h3 className="text-2xl font-black text-white mb-4">Our Mission</h3>
               <p className="text-white/75 text-base leading-relaxed">
-                Our mission is to empower post-graduate and doctoral students with the tools,
+                Our mission is to empower under-graduate, post-graduate and doctoral students with the tools,
                 resources, and expertise they need to succeed in their academic pursuits. We are
                 committed to providing high-quality, personalized services that help students produce
                 original, well-researched, and professionally written academic works.

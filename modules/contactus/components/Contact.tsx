@@ -122,7 +122,7 @@ function HeroBanner() {
         {/* Quick contact chips */}
         <div className="flex flex-wrap justify-center gap-3">
           {[
-            { icon: "📞", label: "+91 82001 60169" },
+            { icon: "📞", label: "+91 94087 82640" },
             { icon: "📧", label: "contact@irtcentre.in" },
             { icon: "💬", label: "Live Chat Available" },
             { icon: "📍", label: "Surat, Gujarat" },
@@ -147,7 +147,7 @@ function ContactCardsRow() {
     {
       icon: "📞",
       title: "Phone & WhatsApp",
-      lines: ["+91 82001 60169"],
+      lines: ["+91 94087 82640"],
       action: "Call Now",
       href: "tel:+919876543210",
       bg: false,
@@ -465,7 +465,7 @@ function ContactFormSection() {
             {[
               { icon: "🏢", label: "Address", val: "Coming Soon.." },
               { icon: "🌐", label: "Website", val: "www.irtcentre.in" },
-              { icon: "📞", label: "Phone", val: "+91 82001 60169" },
+              { icon: "📞", label: "Phone", val: "+91 94087 82640" },
               { icon: "📧", label: "Email", val: "contact@irtcentre.in\nsupport@irtcentre.in" },
             ].map((item) => (
               <div
@@ -776,14 +776,14 @@ function BottomCTA() {
         </h2>
         <p className="text-white/70 text-base max-w-xl mx-auto mb-8 leading-relaxed">
           Join over 1,200 students who have trusted NRTC to guide them through every stage of their
-          research journey. Book your free consultation today.
+          research journey. Contact for your free consultation today.
         </p>
         <div className="flex flex-wrap gap-4 justify-center">
           <a
             href="#"
             className="bg-[#F4A261] text-[#003049] font-black px-9 py-3.5 rounded-full hover:bg-[#E76F51] transition-colors duration-200 shadow-lg"
           >
-            Book Free Consultation
+            Contact for Free Consultation
           </a>
           <a
             href="#"

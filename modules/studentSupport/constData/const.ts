@@ -231,6 +231,6 @@ export const PROCESS = [
   { step: "02", title: "Customised Plan",         desc: "We design a personalised support plan tailored to your research stage and requirements." },
   { step: "03", title: "Expert Assignment",       desc: "You're matched with the most suitable domain expert from our experienced academic team." },
   { step: "04", title: "Ongoing Guidance",        desc: "Regular sessions, feedback loops, and milestone tracking to keep your progress on schedule." },
-  { step: "05", title: "Review & Refinement",     desc: "Iterative reviews ensure your work meets institutional and publication-grade standards." },
+  { step: "05", title: "Review & Refinement",     desc: "Literature reviews ensure your work meets institutional and publication-grade standards." },
   { step: "06", title: "Final Delivery",          desc: "Polished, submission-ready output delivered confidentially and on time — every time." },
 ];

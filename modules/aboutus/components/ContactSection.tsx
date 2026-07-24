@@ -24,7 +24,7 @@ function ContactSection() {
               {
                 icon: "📞",
                 label: "Phone / WhatsApp",
-                value: "+91 82001 60169",
+                value: "+91 94087 82640",
               },
               {
                 icon: "📧",

@@ -15,7 +15,7 @@ function Footer() {
             </p>
           </div>
           <p className="text-sm leading-relaxed">
-            Empowering PG & PhD students with expert guidance, training, and publication support.
+            Empowering UG, PG & PhD students with expert guidance, training, and publication support.
           </p>
         </div>
 
@@ -45,7 +45,7 @@ function Footer() {
         <div>
           <p className="text-white font-bold mb-4 text-sm uppercase tracking-wide">Contact Us</p>
           <p className="text-sm mb-2">📧 contact@irtcentre.in</p>
-          <p className="text-sm mb-2">📞 +91 82001 60169</p>
+          <p className="text-sm mb-2">📞 +91 94087 82640</p>
           <p className="text-sm mb-5">📍 Surat, Gujarat, India</p>
           <div className="flex gap-3">
             {["LinkedIn", "Twitter", "YouTube"].map((s) => (

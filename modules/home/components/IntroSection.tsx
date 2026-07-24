@@ -11,7 +11,7 @@ function IntroSection() {
             Welcome to NanoNova Research &amp; Training Centre — Your Partner in Academic Excellence
           </h2>
           <p className="text-[#003049]/70 text-base leading-relaxed mb-5">
-            At NanoNova Research &amp; Training Centre, we are dedicated to helping post-graduate (PG)
+            At NanoNova Research &amp; Training Centre, we are dedicated to helping under-graduate (UG), post-graduate (PG)
             and PhD students achieve their academic goals. Whether you&apos;re starting your research
             journey, writing your thesis, or preparing for paper publication, our platform offers
             tailored services designed to guide you through every step.
