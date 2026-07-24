@@ -74,12 +74,12 @@ function Navbar() {
               {l.icon} {l.label || ""}
             </Link>
           ))}
-          <a
+          {/* <a
             href="/admin/login"
             className="ml-2 bg-[#F4A261] text-[#003049] text-sm font-bold px-5 py-2 rounded-full hover:bg-[#E76F51] transition-colors duration-200"
           >
             Admin Login
-          </a>
+          </a> */}
         </nav>
 
         {/* Mobile hamburger */}
