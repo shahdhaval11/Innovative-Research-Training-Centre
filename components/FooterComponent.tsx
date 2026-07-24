@@ -6,8 +6,12 @@ function Footer() {
         {/* Brand */}
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-full bg-[#F4A261] flex items-center justify-center font-black text-[#003049]">
-              NR
+            <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0 overflow-hidden">
+              <img
+                src="/nanonovaLogoIcon.png"
+                alt="Nanonova Research and Training Centre logo"
+                className="w-7 h-7 object-contain"
+              />
             </div>
             <p className="text-white font-bold text-sm leading-tight">
               Nanonova Research<br />

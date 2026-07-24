@@ -50,8 +50,12 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-3" onClick={() => router.push('/')} style={{ cursor: "pointer" }}>
-          <div className="w-10 h-10 rounded-full bg-[#F4A261] flex items-center justify-center font-black text-[#003049] text-lg select-none">
-            NR
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 overflow-hidden">
+            <img
+              src="/nanonovaLogoIcon.png"
+              alt="Nanonova Research and Training Centre logo"
+              className="w-8 h-8 object-contain"
+            />
           </div>
           <div className="leading-tight">
             <p className="text-white font-bold text-sm tracking-wide">Nanonova Research</p>
