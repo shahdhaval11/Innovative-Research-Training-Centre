@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Navbar from "@/components/NavbarComponent";
 import Footer from "@/components/FooterComponent";
+import SocialFloatingBar from "@/components/SocialFloatingBar";
 import HeroSlider from "../components/HeroSlider";
 import StatsBar from "../components/StatsBar";
 import IntroSection from "../components/IntroSection";
@@ -15,6 +16,7 @@ export default function Home() {
   return (
     <main className="font-sans">
       <Navbar />
+      <SocialFloatingBar />
       <HeroSlider />
       <StatsBar />
       <IntroSection />

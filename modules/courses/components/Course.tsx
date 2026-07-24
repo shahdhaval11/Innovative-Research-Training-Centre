@@ -2,6 +2,7 @@
 
 import Footer from "@/components/FooterComponent";
 import Navbar from "@/components/NavbarComponent";
+import SocialFloatingBar from "@/components/SocialFloatingBar";
 
 function TrainingCTASection() {
   return (
@@ -47,6 +48,7 @@ export default function Course() {
   return (
    <main className="font-sans">
       <Navbar />
+      <SocialFloatingBar />
       <TrainingCTASection />
         <Footer />
     </main>

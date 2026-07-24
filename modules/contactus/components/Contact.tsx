@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Navbar from "@/components/NavbarComponent";
 import Footer from "@/components/FooterComponent";
+import SocialFloatingBar from "@/components/SocialFloatingBar";
 
 // ─── Color Tokens — Theme 1 (Finalized) ───────────────────────────────────────
 // Primary  (deep navy):   #003049
@@ -802,6 +803,7 @@ export default function Contact() {
   return (
     <main className="font-sans">
       <Navbar />
+      <SocialFloatingBar />
       <HeroBanner />
       {/* <ContactCardsRow /> */}
       <ContactFormSection />

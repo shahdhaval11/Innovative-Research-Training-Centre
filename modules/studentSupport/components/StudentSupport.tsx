@@ -384,6 +384,7 @@
 import { useState } from "react";
 import Navbar from "@/components/NavbarComponent";
 import Footer from "@/components/FooterComponent";
+import SocialFloatingBar from "@/components/SocialFloatingBar";
 import { SERVICES, PROCESS } from "@/modules/studentSupport/constData/const";
 
 // ─── Hero Banner ──────────────────────────────────────────────────────────────
@@ -778,6 +779,7 @@ export default function StudentSupport() {
   return (
     <main className="font-sans">
       <Navbar />
+      <SocialFloatingBar />
       <HeroBanner />
       <ServicesSection />
       <ProcessSection />
