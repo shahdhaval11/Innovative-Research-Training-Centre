@@ -82,7 +82,7 @@ const FAQS = [
     a: "Yes, your first 30-minute consultation with one of our academic advisors is completely free. This helps us understand your needs and recommend the most suitable support plan.",
   },
   {
-    q: "Do you offer online/remote support for students outside Ahmedabad?",
+    q: "Do you offer online/remote support for students outside Surat?",
     a: "Absolutely. We provide full online support via video calls, email, and our digital platform. Students from across India and internationally have benefited from our remote services.",
   },
   {
@@ -124,7 +124,7 @@ function HeroBanner() {
         <div className="flex flex-wrap justify-center gap-3">
           {[
             { icon: "📞", label: "+91 94087 82640" },
-            { icon: "📧", label: "contact@irtcentre.in" },
+            { icon: "📧", label: "nanonovaresearch@gmail.com" },
             { icon: "💬", label: "Live Chat Available" },
             { icon: "📍", label: "Surat, Gujarat" },
           ].map((c) => (
@@ -156,9 +156,9 @@ function ContactCardsRow() {
     {
       icon: "📧",
       title: "Email Us",
-      lines: ["contact@irtcentre.in", "support@irtcentre.in"],
+      lines: ["nanonovaresearch@gmail.com", "support@irtcentre.in"],
       action: "Send Email",
-      href: "mailto:contact@irtcentre.in",
+      href: "mailto:nanonovaresearch@gmail.com",
       bg: true,
     },
     {
@@ -467,7 +467,7 @@ function ContactFormSection() {
               { icon: "🏢", label: "Address", val: "Coming Soon.." },
               { icon: "🌐", label: "Website", val: "www.irtcentre.in" },
               { icon: "📞", label: "Phone", val: "+91 94087 82640" },
-              { icon: "📧", label: "Email", val: "contact@irtcentre.in\nsupport@irtcentre.in" },
+              { icon: "📧", label: "Email", val: "nanonovaresearch@gmail.com\nsupport@irtcentre.in" },
             ].map((item) => (
               <div
                 key={item.label}

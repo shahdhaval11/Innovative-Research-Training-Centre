@@ -19,7 +19,7 @@ function ContactSection() {
               {
                 icon: "📍",
                 label: "Office Address",
-                value: "204, Academic Tower, SG Highway, Ahmedabad – 380054, Gujarat, India",
+                value: "Surat – 395009, Gujarat, India",
               },
               {
                 icon: "📞",
@@ -29,7 +29,7 @@ function ContactSection() {
               {
                 icon: "📧",
                 label: "Email",
-                value: "contact@irtcentre.in  |  support@irtcentre.in",
+                value: "nanonovaresearch@gmail.com  |  support@irtcentre.in",
               },
               {
                 icon: "⏰",

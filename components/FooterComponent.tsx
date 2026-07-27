@@ -48,20 +48,9 @@ function Footer() {
         {/* Contact */}
         <div>
           <p className="text-white font-bold mb-4 text-sm uppercase tracking-wide">Contact Us</p>
-          <p className="text-sm mb-2">📧 contact@irtcentre.in</p>
+          <p className="text-sm mb-2">📧 nanonovaresearch@gmail.com</p>
           <p className="text-sm mb-2">📞 +91 94087 82640</p>
           <p className="text-sm mb-5">📍 Surat, Gujarat, India</p>
-          <div className="flex gap-3">
-            {["LinkedIn", "Twitter", "YouTube"].map((s) => (
-              <a
-                key={s}
-                href="#"
-                className="text-xs border border-white/20 hover:border-[#F4A261] hover:text-[#F4A261] px-3 py-1.5 rounded-full transition-colors duration-200"
-              >
-                {s}
-              </a>
-            ))}
-          </div>
         </div>
       </div>
 

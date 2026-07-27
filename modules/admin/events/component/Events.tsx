@@ -451,7 +451,7 @@ function EventModal({
               ) : (
                 <input
                   type="text"
-                  placeholder="e.g. Online (Zoom) / NRTC Hall, Ahmedabad"
+                  placeholder="e.g. Online (Zoom) / NRTC Hall, Surat"
                   value={form.venue}
                   onChange={(e) => set("venue", e.target.value)}
                   className={inputCls}
