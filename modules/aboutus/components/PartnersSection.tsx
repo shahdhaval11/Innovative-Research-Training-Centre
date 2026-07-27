@@ -15,7 +15,7 @@ function PartnersSection() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-          {PARTNERS.map((p) => (
+          {PARTNERS && PARTNERS.map((p: any) => (
             <div
               key={p.name}
               className="flex items-center gap-4 bg-white border border-[#003049]/8 rounded-2xl p-5 hover:shadow-md hover:border-[#F4A261]/40 transition-all duration-200 group"
@@ -42,7 +42,7 @@ function PartnersSection() {
             </p>
           </div>
           <a
-            href="#"
+            href="/contactus"
             className="shrink-0 bg-[#F4A261] text-[#003049] font-bold px-7 py-3 rounded-full hover:bg-[#E76F51] transition-colors duration-200 whitespace-nowrap"
           >
             Get in Touch →

@@ -78,12 +78,12 @@ export const EXPERTISE = [
 ];
 
 export const PARTNERS = [
-  { name: "National Research Foundation", abbr: "NRF", type: "Research Body" },
-  { name: "Indian Council of Social Science Research", abbr: "ICSSR", type: "Academic Council" },
-  { name: "University Grants Commission", abbr: "UGC", type: "Regulatory Body" },
-  { name: "Association of Indian Universities", abbr: "AIU", type: "Academic Network" },
-  { name: "Springer Nature Academic Publishing", abbr: "SNAP", type: "Publishing Partner" },
-  { name: "Elsevier Research Collaboration", abbr: "ERC", type: "Publishing Partner" },
+  // { name: "National Research Foundation", abbr: "NRF", type: "Research Body" },
+  // { name: "Indian Council of Social Science Research", abbr: "ICSSR", type: "Academic Council" },
+  // { name: "University Grants Commission", abbr: "UGC", type: "Regulatory Body" },
+  // { name: "Association of Indian Universities", abbr: "AIU", type: "Academic Network" },
+  // { name: "Springer Nature Academic Publishing", abbr: "SNAP", type: "Publishing Partner" },
+  // { name: "Elsevier Research Collaboration", abbr: "ERC", type: "Publishing Partner" },
 ];
 
 // export const VISION_POINTS = [

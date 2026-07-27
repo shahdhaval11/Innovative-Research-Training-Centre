@@ -450,14 +450,14 @@ function ContactFormSection() {
               <div className="text-4xl mb-2">📍</div>
               <p className="text-[#003049] font-bold text-sm">NRTC Office, Surat</p>
               <p className="text-[#003049]/50 text-xs mt-1">Coming Soon..</p>
-              <a
+              {/* <a
                 href="https://maps.google.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block mt-3 text-xs font-bold text-[#F4A261] border border-[#F4A261]/40 px-4 py-1.5 rounded-full hover:bg-[#F4A261] hover:text-[#003049] transition-colors"
               >
                 Open in Google Maps →
-              </a>
+              </a> */}
             </div>
           </div>
 
