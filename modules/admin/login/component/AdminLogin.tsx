@@ -162,7 +162,7 @@ export default function AdminLogin() {
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">📧</span>
                   <input
                     type="email"
-                    placeholder="admin@irtcentre.in"
+                    placeholder="nanonovaresearch@gmail.com"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setError(""); }}
                     onKeyDown={handleKeyDown}

@@ -20,9 +20,9 @@ export default function About() {
       <SocialFloatingBar />
       <HeroBanner />
       <MissionVisionSection />
-      <TeamSection />
+      {/* <TeamSection /> */}
       <ExpertiseSection />
-      <PartnersSection />
+      {/* <PartnersSection /> */}
       <ContactSection />
       <Footer />
     </main>

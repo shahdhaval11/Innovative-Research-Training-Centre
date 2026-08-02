@@ -29,7 +29,7 @@ function ContactSection() {
               {
                 icon: "📧",
                 label: "Email",
-                value: "nanonovaresearch@gmail.com  |  support@irtcentre.in",
+                value: "nanonovaresearch@gmail.com",
               },
               {
                 icon: "⏰",
@@ -39,7 +39,7 @@ function ContactSection() {
               {
                 icon: "🌐",
                 label: "Website",
-                value: "www.irtcentre.in",
+                value: "www.nanonova.in",
               },
             ].map((item) => (
               <div

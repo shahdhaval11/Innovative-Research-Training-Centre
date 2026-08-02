@@ -156,7 +156,7 @@ function ContactCardsRow() {
     {
       icon: "📧",
       title: "Email Us",
-      lines: ["nanonovaresearch@gmail.com", "support@irtcentre.in"],
+      lines: ["nanonovaresearch@gmail.com"],
       action: "Send Email",
       href: "mailto:nanonovaresearch@gmail.com",
       bg: true,
@@ -465,9 +465,9 @@ function ContactFormSection() {
           <div className="grid sm:grid-cols-2 gap-4">
             {[
               { icon: "🏢", label: "Address", val: "Coming Soon.." },
-              { icon: "🌐", label: "Website", val: "www.irtcentre.in" },
+              { icon: "🌐", label: "Website", val: "www.nanonova.in" },
               { icon: "📞", label: "Phone", val: "+91 94087 82640" },
-              { icon: "📧", label: "Email", val: "nanonovaresearch@gmail.com\nsupport@irtcentre.in" },
+              { icon: "📧", label: "Email", val: "nanonovaresearch@gmail.com" },
             ].map((item) => (
               <div
                 key={item.label}
@@ -807,7 +807,7 @@ export default function Contact() {
       <HeroBanner />
       {/* <ContactCardsRow /> */}
       <ContactFormSection />
-      <TestimonialsSection />
+      {/* <TestimonialsSection /> */}
       <FAQSection />
       <BottomCTA />
       <Footer />
