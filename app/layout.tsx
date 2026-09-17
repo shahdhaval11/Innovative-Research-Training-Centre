@@ -1,39 +1,33 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { SITE_URL } from "@/lib/seo";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import SiteShell from "@/components/layout/SiteShell";
+import ToastProvider from "@/components/layout/ToastProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Nanonova Research and Training Centre",
-    template: "%s | Nanonova Research and Training Centre",
+    default: "NanoNova Research Training Centre",
+    template: "%s | NanoNova Research Training Centre",
   },
   description:
-    "Nanonova Research and Training Centre (NRTC) offers expert mentorship, research guidance, and professional academic publishing support for under-graduate, post-graduate, and doctoral students.",
+    "Industry-oriented training, research guidance and hands-on laboratory experience in Microbiology, Biotechnology, Bioinformatics, Medical Laboratory Science and more.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col font-sans">
+        <SiteShell>{children}</SiteShell>
+        <ToastProvider />
+      </body>
     </html>
   );
 }

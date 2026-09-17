@@ -1,8 +1,10 @@
-import AdminLogin from "@/modules/admin/login/component/AdminLogin";
-export default function AdminLoginPage() {
-  return (
-    <div className="w-full h-full">
-      <AdminLogin />
-    </div>
-  );
+import type { Metadata } from "next";
+import AdminLoginPage from "@/modules/admin/components/AdminLoginPage";
+
+export const metadata: Metadata = {
+  title: "Login",
+};
+
+export default function Page() {
+  return <AdminLoginPage />;
 }

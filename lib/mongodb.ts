@@ -1,31 +1,31 @@
-import mongoose from "mongoose";
+import { MongoClient, type Db } from "mongodb";
 
-const MONGODB_URI = process.env.MONGODB_URI as string;
+const uri = process.env.MONGODB_URI;
+const dbName = process.env.MONGODB_DB;
 
-if (!MONGODB_URI) {
-  throw new Error("Please define MONGODB_URI in .env.local");
+if (!uri) {
+  throw new Error("Missing MONGODB_URI environment variable");
 }
 
 declare global {
-  // eslint-disable-next-line no-var
-  var mongoose: { conn: mongoose.Connection | null; promise: Promise<mongoose.Connection> | null };
+  var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-export async function connectDB(): Promise<mongoose.Connection> {
-  if (cached.conn) return cached.conn;
-
-  if (!cached.promise) {
-    cached.promise = mongoose
-      .connect(MONGODB_URI, { bufferCommands: false })
-      .then((m) => m.connection);
+// Reused across hot reloads in dev so `next dev` doesn't open a new
+// connection pool on every module reload.
+function getClientPromise(): Promise<MongoClient> {
+  if (process.env.NODE_ENV === "development") {
+    if (!global._mongoClientPromise) {
+      global._mongoClientPromise = new MongoClient(uri as string).connect();
+    }
+    return global._mongoClientPromise;
   }
+  return new MongoClient(uri as string).connect();
+}
 
-  cached.conn = await cached.promise;
-  return cached.conn;
+const clientPromise = getClientPromise();
+
+export async function getDb(): Promise<Db> {
+  const client = await clientPromise;
+  return client.db(dbName);
 }

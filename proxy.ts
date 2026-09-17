@@ -1,25 +1,25 @@
-// ─── proxy.ts (place in project root) ────────────────────────────────────
-// Protects all /admin/* routes except /admin/login
-// In production: verify a signed JWT cookie here instead of relying on localStorage
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { ADMIN_SESSION_COOKIE, verifyAdminSessionToken } from "@/lib/adminSession";
 
-import { NextRequest, NextResponse } from "next/server";
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const session = verifyAdminSessionToken(request.cookies.get(ADMIN_SESSION_COOKIE)?.value);
 
-export function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  if (pathname.startsWith("/admin/login")) {
+    if (session) {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    }
+    return NextResponse.next();
+  }
 
-  // Only guard /admin routes
-  if (!pathname.startsWith("/admin")) return NextResponse.next();
-
-  // Allow the login page through
-  if (pathname === "/admin/login") return NextResponse.next();
-
-  // NOTE: localStorage is client-side only — server proxy cannot read it.
-  // For production, set an httpOnly cookie on login and verify it here.
-  // For this static demo, auth check happens client-side in each page's useEffect.
+  if (!session) {
+    return NextResponse.redirect(new URL("/admin/login", request.url));
+  }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: "/admin/:path*",
 };
