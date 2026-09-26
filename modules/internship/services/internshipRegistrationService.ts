@@ -2,7 +2,7 @@ import path from "path";
 import { mkdir, writeFile } from "fs/promises";
 import { getDb } from "@/lib/mongodb";
 
-const COLLECTION_NAME = "student_cource_registration";
+const COLLECTION_NAME = "student_internship_registrations";
 const UPLOAD_DIR = path.join(process.cwd(), "public", "images", "payment", "internship");
 const PUBLIC_PATH_PREFIX = "/images/payment/internship";
 

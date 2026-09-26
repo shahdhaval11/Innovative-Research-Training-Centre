@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Eye, Inbox } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { fetchEnquiries, type Enquiry } from "@/lib/redux/slices/enquiriesSlice";
+import { fetchEnquiries, markEnquirySeen, type Enquiry } from "@/lib/redux/slices/enquiriesSlice";
 import EnquiryViewModal from "./EnquiryViewModal";
 
 function formatDate(value: string): string {
@@ -22,6 +22,13 @@ export default function EnquiriesPage() {
   useEffect(() => {
     dispatch(fetchEnquiries());
   }, [dispatch]);
+
+  function handleView(enquiry: Enquiry) {
+    setSelected(enquiry);
+    if (enquiry.status !== "seen") {
+      dispatch(markEnquirySeen(enquiry.id));
+    }
+  }
 
   return (
     <div>
@@ -64,27 +71,43 @@ export default function EnquiriesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-secondary-100">
-                {items.map((enquiry) => (
-                  <tr key={enquiry.id} className="hover:bg-secondary-50">
-                    <td className="px-5 py-3 font-medium text-secondary-800">{enquiry.name}</td>
-                    <td className="px-5 py-3 text-secondary-600">{enquiry.email}</td>
-                    <td className="px-5 py-3 text-secondary-600">{enquiry.phone}</td>
-                    <td className="px-5 py-3 text-secondary-600">{enquiry.service}</td>
-                    <td className="px-5 py-3 text-secondary-500">
-                      {formatDate(enquiry.createdAt)}
-                    </td>
-                    <td className="px-5 py-3 text-right">
-                      <button
-                        type="button"
-                        onClick={() => setSelected(enquiry)}
-                        className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold text-primary-700 hover:bg-primary-50"
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {items.map((enquiry) => {
+                  const unseen = enquiry.status !== "seen";
+                  return (
+                    <tr
+                      key={enquiry.id}
+                      className={unseen ? "bg-primary-50/40 hover:bg-primary-50" : "hover:bg-secondary-50"}
+                    >
+                      <td className="px-5 py-3 font-medium text-secondary-800">
+                        <span className="inline-flex items-center gap-2">
+                          {unseen && (
+                            <span
+                              className="h-2 w-2 shrink-0 rounded-full bg-primary-600"
+                              aria-label="Unseen"
+                            />
+                          )}
+                          {enquiry.name}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-secondary-600">{enquiry.email}</td>
+                      <td className="px-5 py-3 text-secondary-600">{enquiry.phone}</td>
+                      <td className="px-5 py-3 text-secondary-600">{enquiry.service}</td>
+                      <td className="px-5 py-3 text-secondary-500">
+                        {formatDate(enquiry.createdAt)}
+                      </td>
+                      <td className="px-5 py-3 text-right">
+                        <button
+                          type="button"
+                          onClick={() => handleView(enquiry)}
+                          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold text-primary-700 hover:bg-primary-50"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

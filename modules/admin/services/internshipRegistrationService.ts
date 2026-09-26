@@ -3,7 +3,8 @@ import { unlink } from "fs/promises";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongodb";
 
-const COLLECTION_NAME = "student_cource_registration";
+export const INTERNSHIP_REGISTRATIONS_COLLECTION_NAME = "student_internship_registrations";
+const COLLECTION_NAME = INTERNSHIP_REGISTRATIONS_COLLECTION_NAME;
 
 type InternshipRegistrationDocument = {
   _id: ObjectId;

@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+export type EnquiryStatus = "unseen" | "seen";
+
 export type Enquiry = {
   id: string;
   name: string;
@@ -8,6 +10,7 @@ export type Enquiry = {
   subject: string;
   service: string;
   message: string;
+  status: EnquiryStatus;
   createdAt: string;
   updatedAt: string;
 };
@@ -35,6 +38,17 @@ export const fetchEnquiries = createAsyncThunk("enquiries/fetch", async () => {
   return data.enquiries as Enquiry[];
 });
 
+export const markEnquirySeen = createAsyncThunk("enquiries/markSeen", async (id: string) => {
+  const res = await fetch(`/api/admin/enquiries/${id}`, { method: "PATCH" });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message ?? "Failed to update enquiry.");
+  }
+
+  return data.enquiry as Enquiry;
+});
+
 const enquiriesSlice = createSlice({
   name: "enquiries",
   initialState,
@@ -52,6 +66,12 @@ const enquiriesSlice = createSlice({
       .addCase(fetchEnquiries.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message ?? "Failed to load enquiries.";
+      })
+      .addCase(markEnquirySeen.fulfilled, (state, action) => {
+        const index = state.items.findIndex((item) => item.id === action.payload.id);
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
       });
   },
 });

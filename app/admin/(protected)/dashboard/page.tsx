@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
+import DashboardPage from "@/modules/admin/components/DashboardPage";
 
 export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-export default function AdminDashboardPage() {
-  return (
-    <h1 className="font-heading text-2xl font-extrabold text-secondary-800">
-      Welcome to dashboard
-    </h1>
-  );
+export default function Page() {
+  return <DashboardPage />;
 }

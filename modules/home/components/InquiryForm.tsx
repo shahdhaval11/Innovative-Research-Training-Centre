@@ -10,14 +10,38 @@ export default function InquiryForm({ variant = "light" }: { variant?: "light" |
   const [submitting, setSubmitting] = useState(false);
   const dark = variant === "dark";
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
     setSubmitting(true);
-    window.setTimeout(() => {
-      setSubmitting(false);
+
+    const formData = new FormData(form);
+
+    try {
+      const res = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          phone: formData.get("phone"),
+          email: formData.get("email"),
+          service: formData.get("interest"),
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message ?? "Something went wrong. Please try again.");
+        return;
+      }
+
       toast.success("Thanks! Our team will contact you shortly.");
-      e.currentTarget.reset();
-    }, 700);
+      form.reset();
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const inputClass =
