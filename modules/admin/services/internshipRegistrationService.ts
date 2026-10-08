@@ -9,7 +9,7 @@ const COLLECTION_NAME = INTERNSHIP_REGISTRATIONS_COLLECTION_NAME;
 type InternshipRegistrationDocument = {
   _id: ObjectId;
   type: string;
-  internshipId: number;
+  internshipId: number | string;
   internshipName: string;
   programMode: string | null;
   fullName: string;
@@ -36,7 +36,7 @@ type InternshipRegistrationDocument = {
 export type InternshipRegistration = {
   id: string;
   type: string;
-  internshipId: number;
+  internshipId: number | string;
   internshipName: string;
   programMode: string | null;
   fullName: string;

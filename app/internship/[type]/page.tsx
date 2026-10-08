@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import InternshipListPage from "@/modules/internship/components/InternshipListPage";
-import { INTERNSHIPS_BY_MODE, INTERNSHIP_MODE_LABEL } from "@/modules/internship/constData";
+import { INTERNSHIP_MODE_LABEL } from "@/modules/internship/constData";
+import { getInternships } from "@/modules/admin/services/internshipService";
 import type { InternshipMode } from "@/modules/internship/types";
 
 const VALID_MODES: InternshipMode[] = ["online", "offline"];
@@ -10,9 +11,8 @@ function isInternshipMode(value: string): value is InternshipMode {
   return (VALID_MODES as string[]).includes(value);
 }
 
-export function generateStaticParams() {
-  return VALID_MODES.map((type) => ({ type }));
-}
+// Internships are managed from the admin panel, so render on every request.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -31,5 +31,7 @@ export default async function Page({ params }: PageProps<"/internship/[type]">) 
   const { type } = await params;
   if (!isInternshipMode(type)) notFound();
 
-  return <InternshipListPage mode={type} internships={INTERNSHIPS_BY_MODE[type]} />;
+  const internships = await getInternships(INTERNSHIP_MODE_LABEL[type]);
+
+  return <InternshipListPage mode={type} internships={internships} />;
 }

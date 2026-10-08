@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 export type InternshipRegistration = {
   id: string;
   type: string;
-  internshipId: number;
+  internshipId: number | string;
   internshipName: string;
   programMode: string | null;
   fullName: string;

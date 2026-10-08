@@ -1,0 +1,124 @@
+"use client";
+
+import { useEffect } from "react";
+import Image from "next/image";
+import { X } from "lucide-react";
+import {
+  INTERNSHIP_DURATIONS,
+  formatFee,
+  type ManagedInternship,
+} from "@/modules/admin/constData/internshipManage";
+
+export default function InternshipDetailModal({
+  internship,
+  onClose,
+  onApply,
+}: {
+  internship: ManagedInternship;
+  onClose: () => void;
+  onApply: () => void;
+}) {
+  const duration = INTERNSHIP_DURATIONS.find((d) => d.value === internship.duration);
+
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-secondary-900/50 p-4"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={internship.track}
+        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="relative h-44 shrink-0 sm:h-56">
+          <Image
+            src={internship.image}
+            alt={internship.internshipDomain}
+            fill
+            sizes="(min-width: 768px) 672px, 100vw"
+            className="object-cover"
+          />
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute top-3 right-3 rounded-full bg-white/95 p-1.5 text-secondary-600 hover:text-secondary-900"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto p-6">
+          <span className="eyebrow">
+            {internship.internshipDomain} · {internship.mode}
+          </span>
+          <h2 className="mt-1.5 font-heading text-xl font-extrabold text-secondary-800">
+            {internship.track}
+          </h2>
+
+          {duration && (
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-secondary-50 p-3">
+                <p className="text-xs font-semibold tracking-wide text-secondary-400 uppercase">
+                  Duration
+                </p>
+                <p className="mt-0.5 text-sm font-semibold text-secondary-800">{duration.label}</p>
+              </div>
+              <div className="rounded-lg bg-secondary-50 p-3">
+                <p className="text-xs font-semibold tracking-wide text-secondary-400 uppercase">
+                  Special Student Fee
+                </p>
+                <p className="mt-0.5 text-sm font-semibold text-secondary-800">
+                  {formatFee(duration.fee)}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div
+            className="mt-5 text-sm leading-relaxed [overflow-wrap:anywhere] text-secondary-600 [&_h1]:mt-4 [&_h1]:font-heading [&_h1]:text-lg [&_h1]:font-bold [&_h2]:mt-4 [&_h2]:font-heading [&_h2]:text-base [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:font-bold [&_li]:my-0.5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
+            dangerouslySetInnerHTML={{ __html: internship.description }}
+          />
+          <p className="mt-4 text-xs text-secondary-400">
+            Special student promotional fees. Applicable taxes, specialized consumables, external
+            testing or project-specific expenses may be additional, wherever applicable.
+          </p>
+        </div>
+
+        <div className="flex shrink-0 justify-end gap-3 border-t border-secondary-100 px-6 py-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-md px-4 py-2.5 text-sm font-semibold text-secondary-600 hover:bg-secondary-100"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            onClick={onApply}
+            className="rounded-md bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700"
+          >
+            Apply Now
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

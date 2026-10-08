@@ -7,7 +7,7 @@ const UPLOAD_DIR = path.join(process.cwd(), "public", "images", "payment", "inte
 const PUBLIC_PATH_PREFIX = "/images/payment/internship";
 
 export type RegisterInternshipApplicationInput = {
-  internshipId: number;
+  internshipId: number | string;
   internshipName: string;
   programMode: string | null;
   fullName: string;

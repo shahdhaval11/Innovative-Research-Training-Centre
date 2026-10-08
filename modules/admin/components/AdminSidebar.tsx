@@ -1,24 +1,34 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Inbox, GraduationCap, LogOut } from "lucide-react";
+import { LayoutDashboard, Inbox, GraduationCap, LogOut, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import Logo from "@/components/layout/Logo";
 
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/enquiries", label: "Enquiries", icon: Inbox },
-  {
-    href: "/admin/internship-registrations",
-    label: "Internship Registrations",
-    icon: GraduationCap,
-  },
 ];
+
+const INTERNSHIP_MENU = {
+  label: "Internship",
+  icon: GraduationCap,
+  children: [
+    { href: "/admin/internships", label: "Manage Internship" },
+    {
+      href: "/admin/internship-registrations",
+      label: "Internship Registration",
+    },
+  ],
+};
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const internshipActive = INTERNSHIP_MENU.children.some((c) => pathname === c.href);
+  const [internshipOpen, setInternshipOpen] = useState(internshipActive);
 
   async function handleLogout() {
     try {
@@ -54,6 +64,42 @@ export default function AdminSidebar() {
             </Link>
           );
         })}
+
+        <button
+          type="button"
+          onClick={() => setInternshipOpen((o) => !o)}
+          aria-expanded={internshipOpen}
+          className={clsx(
+            "flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+            internshipActive && !internshipOpen
+              ? "bg-primary-600 text-white"
+              : "text-secondary-200 hover:bg-white/10 hover:text-white",
+          )}
+        >
+          <INTERNSHIP_MENU.icon className="h-4 w-4" />
+          {INTERNSHIP_MENU.label}
+          <ChevronDown
+            className={clsx("ml-auto h-4 w-4 transition-transform", internshipOpen && "rotate-180")}
+          />
+        </button>
+        {internshipOpen && (
+          <div className="ml-5 space-y-1 border-l border-white/10 pl-3">
+            {INTERNSHIP_MENU.children.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={clsx(
+                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  pathname === href
+                    ? "bg-primary-600 text-white"
+                    : "text-secondary-200 hover:bg-white/10 hover:text-white",
+                )}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
       </nav>
 
       <div className="border-t border-white/10 p-4">

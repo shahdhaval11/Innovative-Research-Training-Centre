@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Image from "next/image";
 import { X, UploadCloud, CheckCircle2 } from "lucide-react";
 
-const PAYMENT_QR_CODE_SRC = "/media/payment-qr-code.svg";
+const PAYMENT_QR_CODE_SRC = "/media/GetPayment.jpeg";
 const MAX_SCREENSHOT_SIZE_MB = 5;
 
 const GENDER_OPTIONS = ["Male", "Female", "Other"] as const;
@@ -178,12 +178,14 @@ export default function ApplyNowModal({
   internshipId,
   programName,
   programMode,
+  amount,
 }: {
   open: boolean;
   onClose: () => void;
-  internshipId: number;
+  internshipId: string | number;
   programName: string;
   programMode?: string;
+  amount?: number;
 }) {
   const [step, setStep] = useState<Step>("details");
   const [values, setValues] = useState<ApplyFormValues>(INITIAL_VALUES);
@@ -716,17 +718,27 @@ export default function ApplyNowModal({
               a screenshot of the successful payment to confirm your application.
             </p>
 
-            <div className="flex flex-col items-center gap-3 rounded-lg border border-secondary-100 bg-secondary-50 px-4 py-6">
-              <div className="rounded-md border border-secondary-200 bg-white p-2">
+            <div className="flex flex-col items-center gap-4 rounded-lg border border-secondary-100 bg-secondary-50 px-4 py-6">
+              {amount !== undefined && (
+                <div className="text-center">
+                  <p className="text-xs font-semibold tracking-wide text-secondary-500 uppercase">
+                    Amount to Pay
+                  </p>
+                  <p className="mt-0.5 font-heading text-3xl font-extrabold text-secondary-800">
+                    ₹{amount.toLocaleString("en-IN")}
+                  </p>
+                </div>
+              )}
+              <div className="overflow-hidden rounded-md border border-secondary-200 bg-white">
                 <Image
                   src={PAYMENT_QR_CODE_SRC}
                   alt="Scan this QR code to pay the application fee"
-                  width={220}
-                  height={220}
-                  className="h-55 w-55"
+                  width={1152}
+                  height={1600}
+                  sizes="240px"
+                  className="h-auto w-60"
                 />
               </div>
-              <p className="text-xs text-secondary-500">Scan &amp; Pay via any UPI app</p>
             </div>
 
             <div className="mt-6">

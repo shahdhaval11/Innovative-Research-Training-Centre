@@ -12,8 +12,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Invalid form data." }, { status: 400 });
   }
 
-  const internshipIdRaw = readString(formData, "internshipId");
-  const internshipId = internshipIdRaw !== null ? Number(internshipIdRaw) : null;
+  const internshipId = readString(formData, "internshipId");
   const internshipName = readString(formData, "internshipName");
   const fullName = readString(formData, "fullName");
   const gender = readString(formData, "gender");
@@ -29,8 +28,7 @@ export async function POST(request: Request) {
   const paymentScreenshot = formData.get("paymentScreenshot");
 
   if (
-    internshipId === null ||
-    !Number.isFinite(internshipId) ||
+    !internshipId ||
     !internshipName ||
     !fullName ||
     !gender ||
