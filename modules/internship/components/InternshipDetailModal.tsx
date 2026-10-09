@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X } from "lucide-react";
 import {
@@ -35,9 +36,10 @@ export default function InternshipDetailModal({
     };
   }, [onClose]);
 
-  return (
+  // Portal to <body> so no ancestor stacking context / transform can clip or overlap the modal.
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-secondary-900/50 sm:items-center sm:p-4"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-secondary-900/50 sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div
@@ -93,7 +95,7 @@ export default function InternshipDetailModal({
           )}
 
           <div
-            className="mt-5 text-sm leading-relaxed [overflow-wrap:anywhere] text-secondary-600 [&_h1]:mt-4 [&_h1]:font-heading [&_h1]:text-lg [&_h1]:font-bold [&_h2]:mt-4 [&_h2]:font-heading [&_h2]:text-base [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:font-bold [&_li]:my-0.5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
+            className="mt-5 text-sm leading-relaxed [overflow-wrap:anywhere] text-secondary-600 [&_*]:static! [&_*]:h-auto! [&_*]:max-w-full! [&_*]:leading-relaxed! [&_*]:float-none! [&_img]:h-auto [&_table]:block [&_table]:overflow-x-auto [&_h1]:mt-4 [&_h1]:font-heading [&_h1]:text-lg [&_h1]:font-bold [&_h2]:mt-4 [&_h2]:font-heading [&_h2]:text-base [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:font-bold [&_li]:my-0.5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
             dangerouslySetInnerHTML={{ __html: internship.description }}
           />
           <p className="mt-4 text-xs text-secondary-400">
@@ -119,6 +121,7 @@ export default function InternshipDetailModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

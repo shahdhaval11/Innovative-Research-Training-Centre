@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import { createPortal } from "react-dom";
 import { X, UploadCloud, CheckCircle2 } from "lucide-react";
 
 const PAYMENT_QR_CODE_SRC = "/media/GetPayment.jpeg";
@@ -388,9 +389,9 @@ export default function ApplyNowModal({
     }
   }
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-secondary-900/50 sm:items-center sm:p-4"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-secondary-900/50 sm:items-center sm:p-4"
       onClick={handleClose}
     >
       <div
@@ -857,6 +858,7 @@ export default function ApplyNowModal({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

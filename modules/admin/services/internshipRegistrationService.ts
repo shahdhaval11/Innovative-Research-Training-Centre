@@ -112,7 +112,13 @@ export async function deleteInternshipRegistration(id: string): Promise<boolean>
 
   await collection.deleteOne({ _id: objectId });
 
-  if (doc.paymentScreenshotPath) {
+  const storedId = doc.paymentScreenshotPath?.match(/^\/api\/internship\/screenshot\/([a-f0-9]{24})$/)?.[1];
+  if (storedId) {
+    await db
+      .collection("internship_payment_screenshots")
+      .deleteOne({ _id: new ObjectId(storedId) })
+      .catch(() => {});
+  } else if (doc.paymentScreenshotPath) {
     const filePath = path.join(process.cwd(), "public", doc.paymentScreenshotPath);
     await unlink(filePath).catch(() => {});
   }

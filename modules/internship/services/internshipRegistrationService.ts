@@ -1,10 +1,6 @@
-import path from "path";
-import { mkdir, writeFile } from "fs/promises";
 import { getDb } from "@/lib/mongodb";
 
 const COLLECTION_NAME = "student_internship_registrations";
-const UPLOAD_DIR = path.join(process.cwd(), "public", "images", "payment", "internship");
-const PUBLIC_PATH_PREFIX = "/images/payment/internship";
 
 export type RegisterInternshipApplicationInput = {
   internshipId: number | string;
@@ -29,27 +25,19 @@ export type RegisterInternshipApplicationInput = {
   paymentScreenshot: File;
 };
 
-const MIME_EXTENSIONS: Record<string, string> = {
-  "image/jpeg": ".jpg",
-  "image/png": ".png",
-  "image/webp": ".webp",
-  "image/heic": ".heic",
-  "image/heif": ".heif",
-};
+export const SCREENSHOT_COLLECTION_NAME = "internship_payment_screenshots";
+export const SCREENSHOT_URL_PREFIX = "/api/internship/screenshot";
 
-// Mobile uploads often have no name/extension, so prefer the MIME type.
-function buildScreenshotFileName(file: File): string {
-  const ext = path.extname(file.name || "").toLowerCase();
-  const safeExt = MIME_EXTENSIONS[file.type] ?? (/^\.[a-z0-9]{1,5}$/.test(ext) ? ext : ".jpg");
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${safeExt}`;
-}
-
+// Screenshots live in MongoDB rather than on disk: the host's filesystem may be
+// read-only or ephemeral, and files added to public/ at runtime are not served.
 async function savePaymentScreenshot(file: File): Promise<string> {
-  await mkdir(UPLOAD_DIR, { recursive: true });
-  const fileName = buildScreenshotFileName(file);
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(UPLOAD_DIR, fileName), buffer);
-  return `${PUBLIC_PATH_PREFIX}/${fileName}`;
+  const db = await getDb();
+  const result = await db.collection(SCREENSHOT_COLLECTION_NAME).insertOne({
+    data: Buffer.from(await file.arrayBuffer()),
+    contentType: file.type.startsWith("image/") ? file.type : "image/jpeg",
+    created_at: new Date(),
+  });
+  return `${SCREENSHOT_URL_PREFIX}/${result.insertedId.toString()}`;
 }
 
 export async function registerInternshipApplication(

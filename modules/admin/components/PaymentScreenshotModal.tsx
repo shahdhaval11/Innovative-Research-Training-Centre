@@ -41,6 +41,7 @@ export default function PaymentScreenshotModal({
           <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-md border border-secondary-100 bg-secondary-50">
             <Image
               src={registration.paymentScreenshotPath}
+              unoptimized
               alt={`Payment screenshot uploaded by ${registration.fullName}`}
               fill
               sizes="(min-width: 640px) 448px, 100vw"
