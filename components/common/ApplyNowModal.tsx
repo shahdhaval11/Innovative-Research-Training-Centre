@@ -7,6 +7,7 @@ import { X, UploadCloud, CheckCircle2 } from "lucide-react";
 
 const PAYMENT_QR_CODE_SRC = "/media/GetPayment.jpeg";
 const MAX_SCREENSHOT_SIZE_MB = 5;
+const MAX_IMAGE_DIMENSION = 1600;
 
 const GENDER_OPTIONS = ["Male", "Female", "Other"] as const;
 
@@ -165,12 +166,45 @@ function validate(values: ApplyFormValues): FormErrors {
 }
 
 const inputClass =
-  "w-full rounded-md border border-secondary-200 bg-white px-3 py-2.5 text-sm text-secondary-800 placeholder:text-secondary-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none";
+  "w-full rounded-md border border-secondary-200 bg-white px-3 py-2.5 text-base sm:text-sm text-secondary-800 placeholder:text-secondary-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none";
 const errorInputClass = "border-red-400 focus:border-red-400 focus:ring-red-400";
 const labelClass = "mb-1.5 block text-xs font-semibold text-secondary-600";
 const errorTextClass = "mt-1 text-xs text-red-500";
 
 type Step = "details" | "payment";
+
+// Phone screenshots/photos can be huge or in formats (HEIC) the server can't handle
+// reliably, so downscale and re-encode them as JPEG before uploading.
+async function compressImage(file: File): Promise<File> {
+  try {
+    const url = URL.createObjectURL(file);
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const el = new window.Image();
+      el.onload = () => resolve(el);
+      el.onerror = () => reject(new Error("decode failed"));
+      el.src = url;
+    }).finally(() => URL.revokeObjectURL(url));
+
+    const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(img.naturalWidth, img.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", 0.85),
+    );
+    if (!blob || blob.size === 0) return file;
+    const baseName = (file.name || "payment").replace(/\.[^.]+$/, "") || "payment";
+    return new File([blob], `${baseName}.jpg`, { type: "image/jpeg" });
+  } catch {
+    return file;
+  }
+}
 
 export default function ApplyNowModal({
   open,
@@ -256,8 +290,13 @@ export default function ApplyNowModal({
     setStep("payment");
   }
 
-  function handleScreenshotChange(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] ?? null;
+  async function handleScreenshotChange(e: ChangeEvent<HTMLInputElement>) {
+    const input = e.target;
+    const picked = input.files?.[0] ?? null;
+    // Some mobile pickers report an empty MIME type, so also trust the extension.
+    const looksLikeImage =
+      !!picked && (picked.type.startsWith("image/") || /\.(jpe?g|png|webp|heic|heif)$/i.test(picked.name));
+    const file = picked && looksLikeImage ? await compressImage(picked) : picked;
     setScreenshotError("");
 
     if (!file) {
@@ -269,15 +308,15 @@ export default function ApplyNowModal({
       return;
     }
 
-    if (!file.type.startsWith("image/")) {
+    if (!looksLikeImage) {
       setScreenshotError("Please upload an image file (JPG, PNG or WEBP).");
-      e.target.value = "";
+      input.value = "";
       return;
     }
 
     if (file.size > MAX_SCREENSHOT_SIZE_MB * 1024 * 1024) {
       setScreenshotError(`Screenshot must be smaller than ${MAX_SCREENSHOT_SIZE_MB}MB.`);
-      e.target.value = "";
+      input.value = "";
       return;
     }
 
@@ -351,14 +390,14 @@ export default function ApplyNowModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-secondary-900/50 p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-secondary-900/50 sm:items-center sm:p-4"
       onClick={handleClose}
     >
       <div
-        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg bg-white shadow-xl"
+        className="flex max-h-[92vh] max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl sm:rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between border-b border-secondary-100 px-6 py-4">
+        <div className="flex items-start justify-between border-b border-secondary-100 px-4 py-4 sm:px-6">
           <div>
             <h2 className="font-heading text-lg font-bold text-secondary-800">Apply Now</h2>
             <p className="mt-0.5 text-sm text-secondary-500">
@@ -370,15 +409,15 @@ export default function ApplyNowModal({
             type="button"
             onClick={handleClose}
             aria-label="Close"
-            className="text-secondary-400 hover:text-secondary-700"
+            className="-m-2 shrink-0 p-2 text-secondary-400 hover:text-secondary-700"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex items-center gap-2 border-b border-secondary-100 px-6 py-3">
+        <div className="flex items-center gap-2 border-b border-secondary-100 px-4 py-3 sm:px-6">
           <div
-            className={`flex items-center gap-2 text-xs font-semibold ${
+            className={`flex items-center gap-2 text-xs font-semibold whitespace-nowrap ${
               step === "details" ? "text-primary-600" : "text-secondary-400"
             }`}
           >
@@ -395,7 +434,7 @@ export default function ApplyNowModal({
           </div>
           <span className="h-px flex-1 bg-secondary-100" />
           <div
-            className={`flex items-center gap-2 text-xs font-semibold ${
+            className={`flex items-center gap-2 text-xs font-semibold whitespace-nowrap ${
               step === "payment" ? "text-primary-600" : "text-secondary-400"
             }`}
           >
@@ -411,7 +450,7 @@ export default function ApplyNowModal({
         </div>
 
         {step === "details" && (
-        <form onSubmit={handleDetailsSubmit} className="overflow-y-auto px-6 py-5">
+        <form onSubmit={handleDetailsSubmit} className="min-h-0 overflow-y-auto overscroll-contain px-4 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6">
           <span className="eyebrow">Section 1</span>
           <h3 className="mt-1 mb-4 font-heading text-sm font-bold text-secondary-800">
             Personal Details
@@ -707,7 +746,7 @@ export default function ApplyNowModal({
         )}
 
         {step === "payment" && (
-          <div className="overflow-y-auto px-6 py-5">
+          <div className="min-h-0 overflow-y-auto overscroll-contain px-4 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6">
             <span className="eyebrow">Section 3</span>
             <h3 className="mt-1 mb-1 font-heading text-sm font-bold text-secondary-800">
               Complete Your Payment
@@ -729,14 +768,14 @@ export default function ApplyNowModal({
                   </p>
                 </div>
               )}
-              <div className="overflow-hidden rounded-md border border-secondary-200 bg-white">
+              <div className="w-full max-w-60 overflow-hidden rounded-md border border-secondary-200 bg-white">
                 <Image
                   src={PAYMENT_QR_CODE_SRC}
                   alt="Scan this QR code to pay the application fee"
                   width={1152}
                   height={1600}
                   sizes="240px"
-                  className="h-auto w-60"
+                  className="h-auto w-full max-w-60"
                 />
               </div>
             </div>

@@ -29,15 +29,24 @@ export type RegisterInternshipApplicationInput = {
   paymentScreenshot: File;
 };
 
-function buildScreenshotFileName(originalName: string): string {
-  const ext = path.extname(originalName).toLowerCase();
-  const safeExt = /^\.[a-z0-9]+$/.test(ext) ? ext : ".jpg";
+const MIME_EXTENSIONS: Record<string, string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/heic": ".heic",
+  "image/heif": ".heif",
+};
+
+// Mobile uploads often have no name/extension, so prefer the MIME type.
+function buildScreenshotFileName(file: File): string {
+  const ext = path.extname(file.name || "").toLowerCase();
+  const safeExt = MIME_EXTENSIONS[file.type] ?? (/^\.[a-z0-9]{1,5}$/.test(ext) ? ext : ".jpg");
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${safeExt}`;
 }
 
 async function savePaymentScreenshot(file: File): Promise<string> {
   await mkdir(UPLOAD_DIR, { recursive: true });
-  const fileName = buildScreenshotFileName(file.name || "");
+  const fileName = buildScreenshotFileName(file);
   const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(path.join(UPLOAD_DIR, fileName), buffer);
   return `${PUBLIC_PATH_PREFIX}/${fileName}`;

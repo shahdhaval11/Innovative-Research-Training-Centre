@@ -37,17 +37,17 @@ export default function InternshipDetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-secondary-900/50 p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-secondary-900/50 sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-label={internship.track}
-        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
+        className="flex max-h-[92vh] max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative h-44 shrink-0 sm:h-56">
+        <div className="relative h-36 shrink-0 sm:h-56">
           <Image
             src={internship.image}
             alt={internship.internshipDomain}
@@ -59,13 +59,13 @@ export default function InternshipDetailModal({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="absolute top-3 right-3 rounded-full bg-white/95 p-1.5 text-secondary-600 hover:text-secondary-900"
+            className="absolute top-3 right-3 rounded-full bg-white/95 p-2 text-secondary-600 hover:text-secondary-900"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6">
           <span className="eyebrow">
             {internship.internshipDomain} · {internship.mode}
           </span>
@@ -102,18 +102,18 @@ export default function InternshipDetailModal({
           </p>
         </div>
 
-        <div className="flex shrink-0 justify-end gap-3 border-t border-secondary-100 px-6 py-4">
+        <div className="flex shrink-0 gap-3 border-t border-secondary-100 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:justify-end sm:px-6 sm:py-4">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md px-4 py-2.5 text-sm font-semibold text-secondary-600 hover:bg-secondary-100"
+            className="flex-1 rounded-md border border-secondary-200 px-4 py-2.5 text-sm font-semibold text-secondary-600 sm:flex-none sm:border-0 hover:bg-secondary-100"
           >
             Close
           </button>
           <button
             type="button"
             onClick={onApply}
-            className="rounded-md bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary-700"
+            className="flex-1 rounded-md bg-primary-600 px-5 py-2.5 sm:flex-none text-sm font-semibold text-white hover:bg-primary-700"
           >
             Apply Now
           </button>

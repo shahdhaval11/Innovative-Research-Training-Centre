@@ -45,7 +45,7 @@ export default function InquiryForm({ variant = "light" }: { variant?: "light" |
   }
 
   const inputClass =
-    "w-full rounded-md border border-secondary-200 bg-white py-3 pl-10 pr-3 text-sm text-secondary-800 placeholder:text-secondary-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none";
+    "w-full rounded-md border border-secondary-200 bg-white py-3 pl-10 pr-3 text-base sm:text-sm text-secondary-800 placeholder:text-secondary-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none";
 
   return (
     <div
@@ -107,7 +107,7 @@ export default function InquiryForm({ variant = "light" }: { variant?: "light" |
           <select
             name="interest"
             defaultValue=""
-            className="w-full rounded-md border border-secondary-200 bg-white px-3 py-3 text-sm text-secondary-800 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
+            className="w-full rounded-md border border-secondary-200 bg-white px-3 py-3 text-base sm:text-sm text-secondary-800 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none"
           >
             <option value="" disabled>
               I am interested in
