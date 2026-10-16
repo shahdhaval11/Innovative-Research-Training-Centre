@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/adminSession";
 import { parseInternshipFormData } from "@/modules/admin/services/internshipForm";
-import { DuplicateSlugError, updateInternship } from "@/modules/admin/services/internshipService";
+import {
+  DuplicateSlugError,
+  deleteInternship,
+  updateInternship,
+} from "@/modules/admin/services/internshipService";
 
 export async function PUT(request: Request, ctx: RouteContext<"/api/admin/internships/[id]">) {
   const session = await getAdminSession();
@@ -39,5 +43,28 @@ export async function PUT(request: Request, ctx: RouteContext<"/api/admin/intern
     }
     console.error("Failed to update internship:", error);
     return NextResponse.json({ message: "Failed to update internship." }, { status: 500 });
+  }
+}
+
+export async function DELETE(_request: Request, ctx: RouteContext<"/api/admin/internships/[id]">) {
+  const session = await getAdminSession();
+
+  if (!session) {
+    return NextResponse.json({ message: "Unauthorized." }, { status: 401 });
+  }
+
+  const { id } = await ctx.params;
+
+  try {
+    const deleted = await deleteInternship(id);
+
+    if (!deleted) {
+      return NextResponse.json({ message: "Internship not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({ id });
+  } catch (error) {
+    console.error("Failed to delete internship:", error);
+    return NextResponse.json({ message: "Failed to delete internship." }, { status: 500 });
   }
 }

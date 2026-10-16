@@ -1,12 +1,17 @@
 import path from "path";
+import { unlink } from "fs/promises";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongodb";
-import { DEFAULT_INTERNSHIP_IMAGE, type ManagedInternship } from "../constData/internshipManage";
+import {
+  DEFAULT_INTERNSHIP_IMAGE,
+  type ManagedInternship,
+} from "../constData/internshipManage";
 
 export const INTERNSHIP_COLLECTION_NAME = "internship";
 
 export const IMAGE_COLLECTION_NAME = "internship_images";
 export const IMAGE_URL_PREFIX = "/api/internship/image";
+const LEGACY_IMAGE_PREFIX = "/images/internship/uploads";
 const IMAGE_CONTENT_TYPES: Record<string, string> = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
@@ -74,6 +79,17 @@ async function saveImage(file: File, ext: string): Promise<string> {
 
 // Only remove images this module stored; never the shared default image.
 async function removeUploadedImage(publicPath: string): Promise<void> {
+  if (publicPath.startsWith(`${LEGACY_IMAGE_PREFIX}/`)) {
+    // Older uploads were written to public/ on disk.
+    const filePath = path.join(
+      process.cwd(),
+      "public",
+      LEGACY_IMAGE_PREFIX,
+      path.basename(publicPath),
+    );
+    await unlink(filePath).catch(() => undefined);
+    return;
+  }
   if (!publicPath.startsWith(`${IMAGE_URL_PREFIX}/`)) return;
   const id = publicPath.slice(IMAGE_URL_PREFIX.length + 1);
   if (!ObjectId.isValid(id)) return;
@@ -84,7 +100,9 @@ async function removeUploadedImage(publicPath: string): Promise<void> {
     .catch(() => undefined);
 }
 
-export async function getInternships(mode?: string): Promise<ManagedInternship[]> {
+export async function getInternships(
+  mode?: string,
+): Promise<ManagedInternship[]> {
   const db = await getDb();
   const docs = await db
     .collection<InternshipDocument>(INTERNSHIP_COLLECTION_NAME)
@@ -95,7 +113,9 @@ export async function getInternships(mode?: string): Promise<ManagedInternship[]
   return docs.map(toInternship);
 }
 
-export async function createInternship(input: CreateInternshipInput): Promise<ManagedInternship> {
+export async function createInternship(
+  input: CreateInternshipInput,
+): Promise<ManagedInternship> {
   // Check first so a rejected duplicate doesn't leave an orphaned upload behind.
   const existing = await (
     await getDb()
@@ -125,14 +145,17 @@ export async function createInternship(input: CreateInternshipInput): Promise<Ma
   };
 
   const db = await getDb();
-  const collection = db.collection<Omit<InternshipDocument, "_id">>(INTERNSHIP_COLLECTION_NAME);
+  const collection = db.collection<Omit<InternshipDocument, "_id">>(
+    INTERNSHIP_COLLECTION_NAME,
+  );
   await collection.createIndex({ slug: 1 }, { unique: true, sparse: true });
 
   let result;
   try {
     result = await collection.insertOne(doc);
   } catch (error) {
-    if ((error as { code?: number }).code === 11000) throw new DuplicateSlugError();
+    if ((error as { code?: number }).code === 11000)
+      throw new DuplicateSlugError();
     throw error;
   }
 
@@ -146,7 +169,9 @@ export async function updateInternship(
   if (!ObjectId.isValid(id)) return null;
 
   const db = await getDb();
-  const collection = db.collection<InternshipDocument>(INTERNSHIP_COLLECTION_NAME);
+  const collection = db.collection<InternshipDocument>(
+    INTERNSHIP_COLLECTION_NAME,
+  );
   const _id = new ObjectId(id);
 
   const current = await collection.findOne({ _id });
@@ -186,7 +211,8 @@ export async function updateInternship(
     );
   } catch (error) {
     if (image !== current.image) await removeUploadedImage(image);
-    if ((error as { code?: number }).code === 11000) throw new DuplicateSlugError();
+    if ((error as { code?: number }).code === 11000)
+      throw new DuplicateSlugError();
     throw error;
   }
 
@@ -198,4 +224,17 @@ export async function updateInternship(
   if (image !== current.image) await removeUploadedImage(current.image);
 
   return toInternship(updated);
+}
+
+export async function deleteInternship(id: string): Promise<boolean> {
+  if (!ObjectId.isValid(id)) return false;
+
+  const db = await getDb();
+  const deleted = await db
+    .collection<InternshipDocument>(INTERNSHIP_COLLECTION_NAME)
+    .findOneAndDelete({ _id: new ObjectId(id) });
+  if (!deleted) return false;
+
+  await removeUploadedImage(deleted.image);
+  return true;
 }

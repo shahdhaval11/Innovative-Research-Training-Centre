@@ -52,6 +52,17 @@ export const updateInternship = createAsyncThunk(
   },
 );
 
+export const deleteInternship = createAsyncThunk("internships/delete", async (id: string) => {
+  const res = await fetch(`/api/admin/internships/${id}`, { method: "DELETE" });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message ?? "Failed to delete internship.");
+  }
+
+  return id;
+});
+
 const internshipsSlice = createSlice({
   name: "internships",
   initialState,
@@ -78,6 +89,9 @@ const internshipsSlice = createSlice({
         if (index !== -1) {
           state.items[index] = action.payload;
         }
+      })
+      .addCase(deleteInternship.fulfilled, (state, action) => {
+        state.items = state.items.filter((item) => item.id !== action.payload);
       });
   },
 });

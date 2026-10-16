@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import {
   createInternship,
+  deleteInternship,
   fetchInternships,
   updateInternship,
 } from "@/lib/redux/slices/internshipsSlice";
@@ -14,6 +15,7 @@ import {
   formatFee,
   type ManagedInternship,
 } from "../constData/internshipManage";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import InternshipFormModal from "./InternshipFormModal";
 import InternshipViewModal from "./InternshipViewModal";
 
@@ -24,6 +26,8 @@ export default function ManageInternshipsPage() {
   const [editing, setEditing] = useState<ManagedInternship | null>(null);
   const [viewing, setViewing] = useState<ManagedInternship | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<ManagedInternship | null>(null);
+  const [deletingBusy, setDeletingBusy] = useState(false);
 
   useEffect(() => {
     dispatch(fetchInternships());
@@ -61,9 +65,19 @@ export default function ManageInternshipsPage() {
     }
   }
 
-  function handleDelete() {
-    // Delete API is not built yet.
-    toast.info("Deleting will be available once the delete API is ready.");
+  async function handleConfirmDelete() {
+    if (!deleting) return;
+
+    setDeletingBusy(true);
+    try {
+      await dispatch(deleteInternship(deleting.id)).unwrap();
+      toast.success("Internship deleted.");
+      setDeleting(null);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete internship.");
+    } finally {
+      setDeletingBusy(false);
+    }
   }
 
   return (
@@ -154,7 +168,7 @@ export default function ManageInternshipsPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={handleDelete}
+                          onClick={() => setDeleting(item)}
                           className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -176,6 +190,15 @@ export default function ManageInternshipsPage() {
           onSave={handleSave}
           saving={saving}
           onClose={() => setFormOpen(false)}
+        />
+      )}
+      {deleting && (
+        <ConfirmDeleteModal
+          title="Delete internship?"
+          message={`"${deleting.track}" will be permanently removed along with its image. This cannot be undone.`}
+          busy={deletingBusy}
+          onConfirm={handleConfirmDelete}
+          onClose={() => setDeleting(null)}
         />
       )}
       {viewing && <InternshipViewModal internship={viewing} onClose={() => setViewing(null)} />}
