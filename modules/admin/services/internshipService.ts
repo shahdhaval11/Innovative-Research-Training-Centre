@@ -1,13 +1,18 @@
 import path from "path";
-import { mkdir, unlink, writeFile } from "fs/promises";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongodb";
 import { DEFAULT_INTERNSHIP_IMAGE, type ManagedInternship } from "../constData/internshipManage";
 
 export const INTERNSHIP_COLLECTION_NAME = "internship";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "images", "internship", "uploads");
-const PUBLIC_PATH_PREFIX = "/images/internship/uploads";
+export const IMAGE_COLLECTION_NAME = "internship_images";
+export const IMAGE_URL_PREFIX = "/api/internship/image";
+const IMAGE_CONTENT_TYPES: Record<string, string> = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+};
 
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
@@ -55,18 +60,28 @@ export function getImageExtension(file: File): string | null {
   return ALLOWED_IMAGE_EXTENSIONS.includes(ext) ? ext : null;
 }
 
+// Images live in MongoDB rather than on disk: files added to public/ at runtime
+// are not served by the production server, and the host filesystem may be ephemeral.
 async function saveImage(file: File, ext: string): Promise<string> {
-  await mkdir(UPLOAD_DIR, { recursive: true });
-  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`;
-  await writeFile(path.join(UPLOAD_DIR, fileName), Buffer.from(await file.arrayBuffer()));
-  return `${PUBLIC_PATH_PREFIX}/${fileName}`;
+  const db = await getDb();
+  const result = await db.collection(IMAGE_COLLECTION_NAME).insertOne({
+    data: Buffer.from(await file.arrayBuffer()),
+    contentType: IMAGE_CONTENT_TYPES[ext] ?? "image/jpeg",
+    created_at: new Date(),
+  });
+  return `${IMAGE_URL_PREFIX}/${result.insertedId.toString()}`;
 }
 
-// Only remove files this module wrote; never the shared default image.
+// Only remove images this module stored; never the shared default image.
 async function removeUploadedImage(publicPath: string): Promise<void> {
-  if (!publicPath.startsWith(`${PUBLIC_PATH_PREFIX}/`)) return;
-  const filePath = path.join(UPLOAD_DIR, path.basename(publicPath));
-  await unlink(filePath).catch(() => undefined);
+  if (!publicPath.startsWith(`${IMAGE_URL_PREFIX}/`)) return;
+  const id = publicPath.slice(IMAGE_URL_PREFIX.length + 1);
+  if (!ObjectId.isValid(id)) return;
+  const db = await getDb();
+  await db
+    .collection(IMAGE_COLLECTION_NAME)
+    .deleteOne({ _id: new ObjectId(id) })
+    .catch(() => undefined);
 }
 
 export async function getInternships(mode?: string): Promise<ManagedInternship[]> {
