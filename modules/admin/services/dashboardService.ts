@@ -1,5 +1,6 @@
 import { getDb } from "@/lib/mongodb";
 import { ENQUIRIES_COLLECTION_NAME, getUnseenEnquiriesCount } from "./enquiryService";
+import { INTERNSHIP_COLLECTION_NAME } from "./internshipService";
 import { INTERNSHIP_REGISTRATIONS_COLLECTION_NAME } from "./internshipRegistrationService";
 
 export type KpiStat = {
@@ -12,12 +13,18 @@ export type KpiStat = {
     label: string;
     count: number;
   };
+  // Optional per-category counts shown below the total, e.g. Online / Offline.
+  breakdown?: {
+    label: string;
+    count: number;
+  }[];
 };
 
 // Add an entry here whenever a new collection should show up as a KPI card
 // on the admin dashboard.
 const KPI_DEFINITIONS = [
   { key: "enquiries", title: "Enquiries", collection: ENQUIRIES_COLLECTION_NAME },
+  { key: "internships", title: "Internships", collection: INTERNSHIP_COLLECTION_NAME },
   {
     key: "internshipRegistrations",
     title: "Internship Registrations",
@@ -28,11 +35,13 @@ const KPI_DEFINITIONS = [
 export async function getDashboardStats(): Promise<KpiStat[]> {
   const db = await getDb();
 
-  const [counts, unseenEnquiriesCount] = await Promise.all([
+  const [counts, unseenEnquiriesCount, onlineCount, offlineCount] = await Promise.all([
     Promise.all(
       KPI_DEFINITIONS.map((definition) => db.collection(definition.collection).countDocuments()),
     ),
     getUnseenEnquiriesCount(),
+    db.collection(INTERNSHIP_COLLECTION_NAME).countDocuments({ mode: "Online" }),
+    db.collection(INTERNSHIP_COLLECTION_NAME).countDocuments({ mode: "Offline" }),
   ]);
 
   return KPI_DEFINITIONS.map((definition, index) => {
@@ -44,6 +53,13 @@ export async function getDashboardStats(): Promise<KpiStat[]> {
 
     if (definition.key === "enquiries") {
       stat.secondary = { label: "Unseen", count: unseenEnquiriesCount };
+    }
+
+    if (definition.key === "internships") {
+      stat.breakdown = [
+        { label: "Online", count: onlineCount },
+        { label: "Offline", count: offlineCount },
+      ];
     }
 
     return stat;

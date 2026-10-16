@@ -8,6 +8,11 @@ export type KpiStat = {
     label: string;
     count: number;
   };
+  // Optional per-category counts shown below the total, e.g. Online / Offline.
+  breakdown?: {
+    label: string;
+    count: number;
+  }[];
 };
 
 type DashboardState = {

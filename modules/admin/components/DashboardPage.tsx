@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { BarChart3, GraduationCap, Inbox, type LucideIcon } from "lucide-react";
+import { BarChart3, BookOpen, GraduationCap, Inbox, type LucideIcon } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { fetchDashboardStats } from "@/lib/redux/slices/dashboardSlice";
 
 const KPI_ICONS: Record<string, LucideIcon> = {
   enquiries: Inbox,
+  internships: BookOpen,
   internshipRegistrations: GraduationCap,
 };
 
@@ -65,6 +66,18 @@ export default function DashboardPage() {
                     </span>
                   )}
                 </div>
+                {stat.breakdown && (
+                  <div className="mt-3 flex gap-2 border-t border-secondary-100 pt-3">
+                    {stat.breakdown.map((item) => (
+                      <span
+                        key={item.label}
+                        className="rounded-full bg-secondary-100 px-2.5 py-0.5 text-xs font-semibold text-secondary-600"
+                      >
+                        {item.label}: {item.count}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}
