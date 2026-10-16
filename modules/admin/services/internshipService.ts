@@ -2,6 +2,7 @@ import path from "path";
 import { unlink } from "fs/promises";
 import { ObjectId } from "mongodb";
 import { getDb } from "@/lib/mongodb";
+import { DURATION_COLLECTION_NAME } from "./durationService";
 import {
   DEFAULT_INTERNSHIP_IMAGE,
   type ManagedInternship,
@@ -45,7 +46,27 @@ export type CreateInternshipInput = {
   image: File | null;
 };
 
-function toInternship(doc: InternshipDocument): ManagedInternship {
+type LinkedDuration = { duration: string; amount: string };
+
+// Looks up the linked `duration` documents for a batch of internships in one query.
+async function loadDurations(docs: InternshipDocument[]): Promise<Map<string, LinkedDuration>> {
+  const ids = [...new Set(docs.map((d) => d.duration))]
+    .filter((id) => ObjectId.isValid(id))
+    .map((id) => new ObjectId(id));
+  if (ids.length === 0) return new Map();
+
+  const rows = await (await getDb())
+    .collection<{ _id: ObjectId } & LinkedDuration>(DURATION_COLLECTION_NAME)
+    .find({ _id: { $in: ids } })
+    .toArray();
+  return new Map(rows.map((r) => [r._id.toString(), r]));
+}
+
+function toInternship(
+  doc: InternshipDocument,
+  durations: Map<string, LinkedDuration>,
+): ManagedInternship {
+  const linked = durations.get(doc.duration);
   return {
     id: doc._id.toString(),
     internshipDomain: doc.internshipDomain,
@@ -55,6 +76,8 @@ function toInternship(doc: InternshipDocument): ManagedInternship {
     description: doc.description,
     image: doc.image,
     duration: doc.duration,
+    durationLabel: linked?.duration ?? null,
+    durationAmount: linked ? Number(linked.amount) : null,
   };
 }
 
@@ -110,7 +133,8 @@ export async function getInternships(
     .sort({ createdAt: -1 })
     .toArray();
 
-  return docs.map(toInternship);
+  const durations = await loadDurations(docs);
+  return docs.map((doc) => toInternship(doc, durations));
 }
 
 export async function createInternship(
@@ -159,7 +183,8 @@ export async function createInternship(
     throw error;
   }
 
-  return toInternship({ _id: result.insertedId, ...doc });
+  const created = { _id: result.insertedId, ...doc };
+  return toInternship(created, await loadDurations([created]));
 }
 
 export async function updateInternship(
@@ -223,7 +248,7 @@ export async function updateInternship(
 
   if (image !== current.image) await removeUploadedImage(current.image);
 
-  return toInternship(updated);
+  return toInternship(updated, await loadDurations([updated]));
 }
 
 export async function deleteInternship(id: string): Promise<boolean> {

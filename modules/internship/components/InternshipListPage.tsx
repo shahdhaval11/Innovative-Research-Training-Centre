@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/ui/Reveal";
 import {
-  INTERNSHIP_DURATIONS,
+  getInternshipDuration,
   formatFee,
   type ManagedInternship,
 } from "@/modules/admin/constData/internshipManage";
@@ -74,7 +74,7 @@ export default function InternshipListPage({
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {internships.map((item, index) => {
-              const duration = INTERNSHIP_DURATIONS.find((d) => d.value === item.duration);
+              const duration = getInternshipDuration(item);
               return (
                 <Reveal key={item.id} delay={(index % 3) * 100}>
                   <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-secondary-100 bg-white transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl">
@@ -141,7 +141,7 @@ export default function InternshipListPage({
           internshipId={applyFor.id}
           programName={applyFor.track}
           programMode={applyFor.mode}
-          amount={INTERNSHIP_DURATIONS.find((d) => d.value === applyFor.duration)?.fee}
+          amount={getInternshipDuration(applyFor)?.fee}
         />
       )}
     </section>

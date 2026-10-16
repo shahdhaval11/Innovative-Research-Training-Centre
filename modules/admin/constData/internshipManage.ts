@@ -19,15 +19,6 @@ export const DEFAULT_INTERNSHIP_IMAGE = "/internship/microbiology.svg";
 
 export const INTERNSHIP_MODES = ["Online", "Offline"];
 
-export const INTERNSHIP_DURATIONS = [
-  { value: "1-week", label: "1 Week", fee: 750 },
-  { value: "15-days", label: "15 Days", fee: 1550 },
-  { value: "1-month", label: "1 Month", fee: 3750 },
-  // Two 3-month tiers exist (Advanced Research Internship / Premium Research Fellowship)
-  { value: "3-months", label: "3 Months", fee: 11250 },
-  { value: "3-months-premium", label: "3 Months", fee: 17500 },
-];
-
 export function slugify(value: string): string {
   return value
     .toLowerCase()
@@ -48,5 +39,15 @@ export type ManagedInternship = {
   slug: string;
   description: string;
   image: string; // object URL for now
-  duration: string; // INTERNSHIP_DURATIONS value
+  duration: string; // _id of the linked document in the `duration` collection
+  durationLabel: string | null; // resolved from the linked duration; null if unlinked
+  durationAmount: number | null;
 };
+
+// Label and fee of the linked duration, or undefined when not linked yet.
+export function getInternshipDuration(
+  internship: Pick<ManagedInternship, "durationLabel" | "durationAmount">,
+): { label: string; fee: number } | undefined {
+  if (internship.durationLabel === null || internship.durationAmount === null) return undefined;
+  return { label: internship.durationLabel, fee: internship.durationAmount };
+}

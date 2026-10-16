@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { X, Upload } from "lucide-react";
+import { useAppSelector } from "@/lib/redux/hooks";
 import {
   INTERNSHIP_DOMAINS,
   DEFAULT_INTERNSHIP_IMAGE,
-  INTERNSHIP_DURATIONS,
   INTERNSHIP_MODES,
   formatFee,
   slugify,
@@ -13,7 +13,10 @@ import {
 } from "../constData/internshipManage";
 import RichTextEditor from "./RichTextEditor";
 
-type FormState = Omit<ManagedInternship, "id" | "slug">;
+type FormState = Omit<
+  ManagedInternship,
+  "id" | "slug" | "durationLabel" | "durationAmount"
+>;
 
 const EMPTY: FormState = {
   internshipDomain: "",
@@ -50,7 +53,9 @@ export default function InternshipFormModal({
     setForm((f) => ({ ...f, [key]: value }));
 
   const slug = slugify(form.track);
-  const fee = INTERNSHIP_DURATIONS.find((d) => d.value === form.duration)?.fee;
+  const { items: durations, status: durationStatus } = useAppSelector((state) => state.durations);
+  const selectedDuration = durations.find((d) => d.id === form.duration);
+  const fee = selectedDuration ? Number(selectedDuration.amount) : undefined;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -117,13 +122,20 @@ export default function InternshipFormModal({
                 onChange={(e) => set("duration", e.target.value)}
                 className={FIELD}
               >
-                <option value="">Select duration</option>
-                {INTERNSHIP_DURATIONS.map((d) => (
-                  <option key={d.value} value={d.value}>
-                    {d.label} — {formatFee(d.fee)}
+                <option value="">
+                  {durationStatus === "loading" ? "Loading durations…" : "Select duration"}
+                </option>
+                {durations.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.duration} — {formatFee(Number(d.amount))}
                   </option>
                 ))}
               </select>
+              {durationStatus === "succeeded" && durations.length === 0 && (
+                <p className="mt-1 text-xs text-secondary-500">
+                  No durations yet. Add one from Manage Duration.
+                </p>
+              )}
               {fee !== undefined && (
                 <p className="mt-1 text-xs text-secondary-500">
                   Special student fee: <strong>{formatFee(fee)}</strong>. Taxes and project-specific

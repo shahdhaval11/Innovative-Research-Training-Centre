@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 import {
-  INTERNSHIP_DURATIONS,
+  getInternshipDuration,
   formatFee,
   type ManagedInternship,
 } from "../constData/internshipManage";
@@ -14,7 +14,7 @@ export default function InternshipViewModal({
   internship: ManagedInternship;
   onClose: () => void;
 }) {
-  const duration = INTERNSHIP_DURATIONS.find((d) => d.value === internship.duration);
+  const duration = getInternshipDuration(internship);
 
   return (
     <div

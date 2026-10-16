@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X } from "lucide-react";
 import {
-  INTERNSHIP_DURATIONS,
+  getInternshipDuration,
   formatFee,
   type ManagedInternship,
 } from "@/modules/admin/constData/internshipManage";
@@ -19,7 +19,7 @@ export default function InternshipDetailModal({
   onClose: () => void;
   onApply: () => void;
 }) {
-  const duration = INTERNSHIP_DURATIONS.find((d) => d.value === internship.duration);
+  const duration = getInternshipDuration(internship);
 
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;

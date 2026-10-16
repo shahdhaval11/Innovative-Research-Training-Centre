@@ -1,6 +1,6 @@
+import { ObjectId } from "mongodb";
 import {
   INTERNSHIP_DOMAINS,
-  INTERNSHIP_DURATIONS,
   INTERNSHIP_MODES,
   slugify,
 } from "../constData/internshipManage";
@@ -36,7 +36,7 @@ export function parseInternshipFormData(
   if (
     !INTERNSHIP_DOMAINS.includes(internshipDomain) ||
     !INTERNSHIP_MODES.includes(mode) ||
-    !INTERNSHIP_DURATIONS.some((d) => d.value === duration) ||
+    !ObjectId.isValid(duration) ||
     !track ||
     !slug ||
     !description.replace(/<[^>]*>/g, "").trim()

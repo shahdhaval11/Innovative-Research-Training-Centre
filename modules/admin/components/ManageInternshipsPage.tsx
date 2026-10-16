@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, Pencil, Plus, Trash2, GraduationCap } from "lucide-react";
+import Link from "next/link";
+import { Clock, Eye, Pencil, Plus, Trash2, GraduationCap } from "lucide-react";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { fetchDurations } from "@/lib/redux/slices/durationsSlice";
 import {
   createInternship,
   deleteInternship,
@@ -11,7 +13,7 @@ import {
   updateInternship,
 } from "@/lib/redux/slices/internshipsSlice";
 import {
-  INTERNSHIP_DURATIONS,
+  getInternshipDuration,
   formatFee,
   type ManagedInternship,
 } from "../constData/internshipManage";
@@ -31,6 +33,7 @@ export default function ManageInternshipsPage() {
 
   useEffect(() => {
     dispatch(fetchInternships());
+    dispatch(fetchDurations("internship"));
   }, [dispatch]);
 
   function openForm(internship: ManagedInternship | null) {
@@ -38,7 +41,8 @@ export default function ManageInternshipsPage() {
     setFormOpen(true);
   }
 
-  async function handleSave(data: Omit<ManagedInternship, "id">, imageFile: File | null) {
+  async function handleSave(data: Omit<ManagedInternship, "id" | "durationLabel" | "durationAmount">,
+    imageFile: File | null) {
     const formData = new FormData();
     formData.set("internshipDomain", data.internshipDomain);
     formData.set("mode", data.mode);
@@ -91,14 +95,23 @@ export default function ManageInternshipsPage() {
             Add, edit and remove the internships shown on the website.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => openForm(null)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
-        >
-          <Plus className="h-4 w-4" />
-          Add New Internship
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/admin/internships/durations"
+            className="inline-flex items-center gap-2 rounded-md border border-secondary-200 bg-white px-4 py-2 text-sm font-semibold text-secondary-700 hover:bg-secondary-50"
+          >
+            <Clock className="h-4 w-4" />
+            Manage Duration
+          </Link>
+          <button
+            type="button"
+            onClick={() => openForm(null)}
+            className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
+          >
+            <Plus className="h-4 w-4" />
+            Add New Internship
+          </button>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-lg border border-secondary-100 bg-white shadow-sm">
@@ -135,7 +148,7 @@ export default function ManageInternshipsPage() {
               </thead>
               <tbody className="divide-y divide-secondary-100">
                 {items.map((item) => {
-                  const duration = INTERNSHIP_DURATIONS.find((d) => d.value === item.duration);
+                  const duration = getInternshipDuration(item);
                   return (
                     <tr key={item.id} className="hover:bg-secondary-50">
                       <td className="px-5 py-3">

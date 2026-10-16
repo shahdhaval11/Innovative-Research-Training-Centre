@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/adminSession";
 import { parseInternshipFormData } from "@/modules/admin/services/internshipForm";
+import { internshipDurationExists } from "@/modules/admin/services/durationService";
 import {
   DuplicateSlugError,
   deleteInternship,
@@ -25,6 +26,10 @@ export async function PUT(request: Request, ctx: RouteContext<"/api/admin/intern
   }
 
   const { id } = await ctx.params;
+
+  if (!(await internshipDurationExists(parsed.data.duration))) {
+    return NextResponse.json({ message: "Selected duration does not exist." }, { status: 400 });
+  }
 
   try {
     const internship = await updateInternship(id, parsed.data);

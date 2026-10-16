@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/adminSession";
 import { parseInternshipFormData } from "@/modules/admin/services/internshipForm";
+import { internshipDurationExists } from "@/modules/admin/services/durationService";
 import {
   DuplicateSlugError,
   createInternship,
@@ -33,6 +34,10 @@ export async function POST(request: Request) {
   const parsed = parseInternshipFormData(formData);
   if ("error" in parsed) {
     return NextResponse.json({ message: parsed.error }, { status: 400 });
+  }
+
+  if (!(await internshipDurationExists(parsed.data.duration))) {
+    return NextResponse.json({ message: "Selected duration does not exist." }, { status: 400 });
   }
 
   try {
