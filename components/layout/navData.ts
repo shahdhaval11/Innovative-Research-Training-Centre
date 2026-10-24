@@ -33,7 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
           { label: "About NanoNova", href: "/aboutus" },
           { label: "Vision & Mission", href: "/aboutus#vision-mission" },
           { label: "Why NanoNova?", href: "/aboutus#why-nanonova" },
-          { label: "Our Team", href: "/aboutus#our-team" },
+          { label: "Our Advisory Members", href: "/aboutus/advisory-members" },
           { label: "Laboratory & Infrastructure", href: "/aboutus#infrastructure" },
           { label: "Our Partners", href: "/aboutus#partners" },
           { label: "Achievements", href: "/aboutus#achievements" },
