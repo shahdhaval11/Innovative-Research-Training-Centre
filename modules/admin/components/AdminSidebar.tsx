@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Inbox, GraduationCap, Users, LogOut, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Inbox, GraduationCap, Users, MessageSquare, LogOut, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import Logo from "@/components/layout/Logo";
 
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/enquiries", label: "Enquiries", icon: Inbox },
+  { href: "/admin/feedback", label: "Feedback", icon: MessageSquare },
 ];
 
 const ADVISORY_NAV_ITEM = {

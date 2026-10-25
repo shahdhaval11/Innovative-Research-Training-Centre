@@ -13,6 +13,8 @@ export type NavItem = {
   /** Shorter label used in the top navbar row to keep it on one line; full `label` is used everywhere else (mega menu heading, mobile menu, footer). */
   shortLabel?: string;
   href: string;
+  /** Renders a button that opens a modal instead of linking to `href`. */
+  action?: "feedback";
   columns?: NavColumn[];
   cta?: NavLink;
   /** Render the dropdown as a compact, content-sized menu under the nav item instead of a full-width mega panel. */
@@ -321,5 +323,10 @@ export const NAV_ITEMS: NavItem[] = [
   {
     label: "Contact Us",
     href: "/contactus",
+  },
+  {
+    label: "Feedback",
+    href: "#",
+    action: "feedback",
   },
 ];

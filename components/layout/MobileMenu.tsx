@@ -2,12 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, X, Phone, Mail, Lock } from "lucide-react";
+import { ChevronDown, X, Phone, Mail } from "lucide-react";
 import Logo from "./Logo";
 import { NAV_ITEMS } from "./navData";
 import { SITE_CONTACT } from "@/lib/siteConfig";
 
-export default function MobileMenu({ onClose }: { onClose: () => void }) {
+export default function MobileMenu({
+  onClose,
+  onFeedback,
+}: {
+  onClose: () => void;
+  onFeedback: () => void;
+}) {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
@@ -82,6 +88,14 @@ export default function MobileMenu({ onClose }: { onClose: () => void }) {
                         </div>
                       )}
                     </>
+                  ) : item.action === "feedback" ? (
+                    <button
+                      type="button"
+                      onClick={onFeedback}
+                      className="block w-full px-2 py-3.5 text-left text-sm font-semibold text-secondary-800"
+                    >
+                      {item.label}
+                    </button>
                   ) : (
                     <Link
                       href={item.href}
@@ -108,14 +122,6 @@ export default function MobileMenu({ onClose }: { onClose: () => void }) {
           </Link>
           <Link href="/contactus" onClick={onClose} className="btn-primary mt-2 w-full">
             Enquire Now
-          </Link>
-          <Link
-            href="/admin/login"
-            onClick={onClose}
-            className="btn-outline w-full"
-          >
-            <Lock className="h-3.5 w-3.5" />
-            Admin Login
           </Link>
         </div>
       </div>

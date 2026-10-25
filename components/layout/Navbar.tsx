@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Menu, Lock } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import clsx from "clsx";
 import Logo from "./Logo";
 import TopBar from "./TopBar";
 import MegaMenuPanel from "./MegaMenuPanel";
 import MobileMenu from "./MobileMenu";
+import FeedbackModal from "@/components/common/FeedbackModal";
 import { NAV_ITEMS } from "./navData";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white">
@@ -35,7 +37,13 @@ export default function Navbar() {
                 >
                   <Link
                     href={item.href}
-                    onClick={() => setOpenMenu(null)}
+                    onClick={(e) => {
+                      setOpenMenu(null);
+                      if (item.action === "feedback") {
+                        e.preventDefault();
+                        setFeedbackOpen(true);
+                      }
+                    }}
                     className={clsx(
                       "flex items-center gap-0.5 rounded-md px-1.5 py-2 text-[13px] font-semibold whitespace-nowrap transition-colors",
                       openMenu === item.label
@@ -78,13 +86,6 @@ export default function Navbar() {
 
           <div className="flex items-center gap-3">
             <Link
-              href="/admin/login"
-              className="hidden items-center gap-1.5 rounded-md border border-secondary-200 px-4 py-2.5 text-sm font-semibold whitespace-nowrap text-secondary-700 transition-colors hover:border-secondary-800 hover:text-secondary-800 xl:inline-flex"
-            >
-              <Lock className="h-3.5 w-3.5" />
-              Admin
-            </Link>
-            <Link
               href="/contactus"
               className="hidden items-center gap-1.5 rounded-md bg-primary-600 px-4 py-2.5 text-sm font-semibold whitespace-nowrap text-white transition-colors hover:bg-primary-700 xl:inline-flex"
             >
@@ -110,7 +111,17 @@ export default function Navbar() {
         )}
       </div>
 
-      {mobileOpen && <MobileMenu onClose={() => setMobileOpen(false)} />}
+      {mobileOpen && (
+        <MobileMenu
+          onClose={() => setMobileOpen(false)}
+          onFeedback={() => {
+            setMobileOpen(false);
+            setFeedbackOpen(true);
+          }}
+        />
+      )}
+
+      {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
     </header>
   );
 }
