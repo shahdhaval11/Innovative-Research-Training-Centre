@@ -3,6 +3,7 @@ import advisoryMembersReducer from "./slices/advisoryMembersSlice";
 import dashboardReducer from "./slices/dashboardSlice";
 import durationsReducer from "./slices/durationsSlice";
 import enquiriesReducer from "./slices/enquiriesSlice";
+import eventsReducer from "./slices/eventsSlice";
 import feedbackReducer from "./slices/feedbackSlice";
 import internshipsReducer from "./slices/internshipsSlice";
 import internshipRegistrationsReducer from "./slices/internshipRegistrationsSlice";
@@ -13,6 +14,7 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     durations: durationsReducer,
     enquiries: enquiriesReducer,
+    events: eventsReducer,
     feedback: feedbackReducer,
     internships: internshipsReducer,
     internshipRegistrations: internshipRegistrationsReducer,

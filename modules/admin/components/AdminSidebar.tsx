@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Inbox, GraduationCap, Users, MessageSquare, LogOut, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Inbox, GraduationCap, Users, MessageSquare, CalendarDays, LogOut, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import Logo from "@/components/layout/Logo";
 
@@ -17,6 +17,12 @@ const ADVISORY_NAV_ITEM = {
   href: "/admin/advisory-members",
   label: "Manage Advisory Member",
   icon: Users,
+};
+
+const EVENTS_NAV_ITEM = {
+  href: "/admin/events",
+  label: "Manage Events & Workshop",
+  icon: CalendarDays,
 };
 
 const INTERNSHIP_MENU = {
@@ -119,6 +125,19 @@ export default function AdminSidebar() {
         >
           <ADVISORY_NAV_ITEM.icon className="h-4 w-4" />
           {ADVISORY_NAV_ITEM.label}
+        </Link>
+
+        <Link
+          href={EVENTS_NAV_ITEM.href}
+          className={clsx(
+            "flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+            pathname === EVENTS_NAV_ITEM.href
+              ? "bg-primary-600 text-white"
+              : "text-secondary-200 hover:bg-white/10 hover:text-white",
+          )}
+        >
+          <EVENTS_NAV_ITEM.icon className="h-4 w-4" />
+          {EVENTS_NAV_ITEM.label}
         </Link>
       </nav>
 
