@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { registerInternshipApplication } from "@/modules/internship/services/internshipRegistrationService";
+import {
+  DuplicateRegistrationError,
+  registerInternshipApplication,
+} from "@/modules/internship/services/internshipRegistrationService";
 
 function readString(formData: FormData, key: string): string | null {
   const value = formData.get(key);
@@ -72,6 +75,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
+    if (error instanceof DuplicateRegistrationError) {
+      return NextResponse.json(
+        { message: error.message, fields: error.fields },
+        { status: 409 },
+      );
+    }
     console.error("Failed to save internship registration:", error);
     return NextResponse.json(
       { message: "Something went wrong while submitting your application." },

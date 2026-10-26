@@ -9,6 +9,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import type { ManagedEvent } from "@/modules/admin/services/eventService";
+import EventRegisterButton from "./EventRegisterButton";
 import {
   formatDuration,
   formatLongDate,
@@ -50,6 +51,7 @@ function InfoRow({
 
 export default function EventDetailPage({ event }: { event: ManagedEvent }) {
   const timing = getTiming(event);
+  const ended = timing.label === "Ended";
   const sameDay = formatLongDate(event.startAt) === formatLongDate(event.endAt);
 
   return (
@@ -137,11 +139,19 @@ export default function EventDetailPage({ event }: { event: ManagedEvent }) {
               </InfoRow>
 
               <div className="space-y-3 border-t border-secondary-100 pt-5">
+                {!ended && (
+                  <EventRegisterButton
+                    eventId={event.id}
+                    eventName={event.title}
+                    eventType={event.type}
+                    fees={event.fees}
+                  />
+                )}
                 {event.brochure && (
                   <a
                     href={event.brochure}
                     download={event.brochureName || true}
-                    className="btn-primary w-full"
+                    className="btn-outline w-full"
                   >
                     <Download className="h-4 w-4" />
                     Download Brochure
@@ -153,7 +163,10 @@ export default function EventDetailPage({ event }: { event: ManagedEvent }) {
                     <span className="truncate">{event.brochureName}</span>
                   </p>
                 )}
-                <Link href="/contactus" className="btn-outline w-full">
+                <Link
+                  href="/contactus"
+                  className="flex items-center justify-center gap-2 text-sm font-semibold text-primary-700 hover:text-primary-800"
+                >
                   <MessageCircle className="h-4 w-4" />
                   Have a question? Contact us
                 </Link>

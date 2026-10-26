@@ -2,7 +2,7 @@
 
 import { ExternalLink, X } from "lucide-react";
 import type { ManagedEvent } from "@/lib/redux/slices/eventsSlice";
-import { formatEventDateTime } from "./eventFormat";
+import { formatEventDateTime, formatEventFees } from "./eventFormat";
 
 function Detail({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -55,6 +55,7 @@ export default function EventViewModal({
             <Detail label="Ends">{formatEventDateTime(event.endAt)}</Detail>
           </div>
           <div className="grid grid-cols-2 gap-4">
+            <Detail label="Fees">{formatEventFees(event.fees)}</Detail>
             <Detail label="Type">{event.type}</Detail>
             <Detail label="Status">
               {event.status === "active" ? "Active" : "Inactive"}

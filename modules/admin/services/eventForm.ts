@@ -29,13 +29,17 @@ export function parseEventFormData(
   const description = readString(formData, "description");
   const startAt = new Date(readString(formData, "startAt"));
   const endAt = new Date(readString(formData, "endAt"));
+  const feesRaw = readString(formData, "fees");
+  const fees = feesRaw === "" ? NaN : Number(feesRaw);
 
   if (
     !EVENT_TYPES.includes(type) ||
     !title ||
     !description ||
     Number.isNaN(startAt.getTime()) ||
-    Number.isNaN(endAt.getTime())
+    Number.isNaN(endAt.getTime()) ||
+    !Number.isFinite(fees) ||
+    fees < 0
   ) {
     return { error: "Missing or invalid fields." };
   }
@@ -57,5 +61,5 @@ export function parseEventFormData(
     return { error: "Brochure must be a PDF, JPG, PNG or WebP file up to 10 MB." };
   }
 
-  return { data: { type, title, description, startAt, endAt, banner, brochure } };
+  return { data: { type, title, description, startAt, endAt, fees, banner, brochure } };
 }

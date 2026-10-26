@@ -16,7 +16,7 @@ import {
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import EventFormModal, { type EventFormValues } from "./EventFormModal";
 import EventViewModal from "./EventViewModal";
-import { formatEventDateTime } from "./eventFormat";
+import { formatEventDateTime, formatEventFees } from "./eventFormat";
 
 export default function ManageEventsPage() {
   const dispatch = useAppDispatch();
@@ -46,6 +46,7 @@ export default function ManageEventsPage() {
     // datetime-local values are in the browser's timezone; send an absolute instant.
     formData.set("startAt", new Date(values.startAt).toISOString());
     formData.set("endAt", new Date(values.endAt).toISOString());
+    formData.set("fees", values.fees);
     if (values.bannerFile) formData.set("banner", values.bannerFile);
     if (values.brochureFile) formData.set("brochure", values.brochureFile);
 
@@ -139,6 +140,7 @@ export default function ManageEventsPage() {
                   <th className="px-5 py-3 font-semibold">Title</th>
                   <th className="px-5 py-3 font-semibold">Starts</th>
                   <th className="px-5 py-3 font-semibold">Ends</th>
+                  <th className="px-5 py-3 font-semibold">Fees</th>
                   <th className="px-5 py-3 font-semibold">Status</th>
                   <th className="px-5 py-3 font-semibold">
                     <span className="sr-only">Actions</span>
@@ -161,6 +163,9 @@ export default function ManageEventsPage() {
                       </td>
                       <td className="px-5 py-3 whitespace-nowrap text-secondary-600">
                         {formatEventDateTime(item.endAt)}
+                      </td>
+                      <td className="px-5 py-3 whitespace-nowrap text-secondary-600">
+                        {formatEventFees(item.fees)}
                       </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">

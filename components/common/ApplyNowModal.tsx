@@ -214,18 +214,32 @@ export default function ApplyNowModal({
   programName,
   programMode,
   amount,
+  title = "Apply Now",
+  submitUrl = "/api/internship/register",
+  checkUrl = "/api/internship/register/check",
+  registrationFields,
 }: {
   open: boolean;
   onClose: () => void;
-  internshipId: string | number;
+  internshipId?: string | number;
   programName: string;
   programMode?: string;
   amount?: number;
+  title?: string;
+  // Defaults to the internship endpoint; events post to their own.
+  submitUrl?: string;
+  // Called after the details step to reject repeat registrations before payment.
+  checkUrl?: string;
+  // Replaces the internship id/name/mode fields sent to `submitUrl`.
+  registrationFields?: Record<string, string>;
 }) {
+  // A zero fee means there is nothing to pay, so the payment step is skipped.
+  const requiresPayment = amount !== 0;
   const [step, setStep] = useState<Step>("details");
   const [values, setValues] = useState<ApplyFormValues>(INITIAL_VALUES);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [checking, setChecking] = useState(false);
   const [screenshot, setScreenshot] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [screenshotError, setScreenshotError] = useState("");
@@ -281,14 +295,44 @@ export default function ApplyNowModal({
       setField(field, e.target.value as never);
   }
 
-  function handleDetailsSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleDetailsSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const validationErrors = validate(values);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
-    setStep("payment");
+    setChecking(true);
+    try {
+      const response = await fetch(checkUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...(registrationFields ?? { internshipId }),
+          email: values.email.trim(),
+          mobile: values.mobile.trim(),
+        }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(data?.message || "Failed to verify your details.");
+
+      if (data.duplicate) {
+        setErrors({
+          ...(data.fields?.email && { email: "This email is already registered." }),
+          ...(data.fields?.mobile && { mobile: "This mobile number is already registered." }),
+        });
+        toast.error("You have already registered for this program with these details.");
+        return;
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to verify your details.");
+      return;
+    } finally {
+      setChecking(false);
+    }
+
+    if (requiresPayment) setStep("payment");
+    else submitApplication(null);
   }
 
   async function handleScreenshotChange(e: ChangeEvent<HTMLInputElement>) {
@@ -337,19 +381,27 @@ export default function ApplyNowModal({
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  async function handleFinalSubmit() {
+  function handleFinalSubmit() {
     if (!screenshot) {
       setScreenshotError("Please upload your payment screenshot to confirm your application.");
       return;
     }
 
+    submitApplication(screenshot);
+  }
+
+  async function submitApplication(paymentScreenshot: File | null) {
     setSubmitting(true);
 
     try {
       const formData = new FormData();
-      formData.append("internshipId", String(internshipId));
-      formData.append("internshipName", programName);
-      if (programMode) formData.append("programMode", programMode);
+      if (registrationFields) {
+        for (const [key, value] of Object.entries(registrationFields)) formData.append(key, value);
+      } else {
+        formData.append("internshipId", String(internshipId));
+        formData.append("internshipName", programName);
+        if (programMode) formData.append("programMode", programMode);
+      }
       formData.append("fullName", values.fullName);
       formData.append("dob", values.dob);
       formData.append("gender", values.gender);
@@ -366,9 +418,9 @@ export default function ApplyNowModal({
       formData.append("college", values.college);
       formData.append("affiliation", values.affiliation);
       formData.append("consent", String(values.consent));
-      formData.append("paymentScreenshot", screenshot);
+      if (paymentScreenshot) formData.append("paymentScreenshot", paymentScreenshot);
 
-      const response = await fetch("/api/internship/register", {
+      const response = await fetch(submitUrl, {
         method: "POST",
         body: formData,
       });
@@ -400,7 +452,7 @@ export default function ApplyNowModal({
       >
         <div className="flex items-start justify-between border-b border-secondary-100 px-4 py-4 sm:px-6">
           <div>
-            <h2 className="font-heading text-lg font-bold text-secondary-800">Apply Now</h2>
+            <h2 className="font-heading text-lg font-bold text-secondary-800">{title}</h2>
             <p className="mt-0.5 text-sm text-secondary-500">
               {programName}
               {programMode ? ` · ${programMode}` : ""}
@@ -416,6 +468,7 @@ export default function ApplyNowModal({
           </button>
         </div>
 
+        {requiresPayment && (
         <div className="flex items-center gap-2 border-b border-secondary-100 px-4 py-3 sm:px-6">
           <div
             className={`flex items-center gap-2 text-xs font-semibold whitespace-nowrap ${
@@ -449,6 +502,7 @@ export default function ApplyNowModal({
             Payment
           </div>
         </div>
+        )}
 
         {step === "details" && (
         <form onSubmit={handleDetailsSubmit} className="min-h-0 overflow-y-auto overscroll-contain px-4 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6">
@@ -740,8 +794,14 @@ export default function ApplyNowModal({
             {errors.consent && <p className={errorTextClass}>{errors.consent}</p>}
           </div>
 
-          <button type="submit" className="btn-primary mt-5 w-full">
-            Continue to Payment
+          <button type="submit" disabled={submitting || checking} className="btn-primary mt-5 w-full disabled:opacity-50">
+            {checking
+              ? "Checking..."
+              : requiresPayment
+                ? "Continue to Payment"
+                : submitting
+                  ? "Submitting..."
+                  : "Submit Registration"}
           </button>
         </form>
         )}

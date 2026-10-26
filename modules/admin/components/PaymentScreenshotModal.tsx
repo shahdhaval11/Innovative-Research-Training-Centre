@@ -2,13 +2,12 @@
 
 import Image from "next/image";
 import { X } from "lucide-react";
-import type { InternshipRegistration } from "@/lib/redux/slices/internshipRegistrationsSlice";
 
 export default function PaymentScreenshotModal({
   registration,
   onClose,
 }: {
-  registration: InternshipRegistration;
+  registration: { fullName: string; paymentScreenshotPath: string };
   onClose: () => void;
 }) {
   return (

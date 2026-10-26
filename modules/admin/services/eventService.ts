@@ -34,6 +34,7 @@ type EventDocument = {
   description: string;
   startAt: Date;
   endAt: Date;
+  fees: number; // INR, 0 = free
   banner: string; // FILE_URL_PREFIX/<id>
   brochure: string; // FILE_URL_PREFIX/<id>, or "" when none was uploaded
   brochureName: string;
@@ -49,6 +50,7 @@ export type ManagedEvent = {
   description: string;
   startAt: string; // ISO
   endAt: string; // ISO
+  fees: number;
   banner: string;
   brochure: string;
   brochureName: string;
@@ -61,6 +63,7 @@ export type EventInput = {
   description: string;
   startAt: Date;
   endAt: Date;
+  fees: number;
   banner: File | null;
   brochure: File | null;
 };
@@ -73,6 +76,7 @@ function toManagedEvent(doc: EventDocument): ManagedEvent {
     description: doc.description,
     startAt: doc.startAt.toISOString(),
     endAt: doc.endAt.toISOString(),
+    fees: doc.fees ?? 0,
     banner: doc.banner,
     brochure: doc.brochure,
     brochureName: doc.brochureName ?? "",
@@ -142,6 +146,7 @@ export async function createEvent(input: EventInput): Promise<ManagedEvent> {
       description: input.description,
       startAt: input.startAt,
       endAt: input.endAt,
+      fees: input.fees,
       banner,
       brochure,
       brochureName: input.brochure?.name ?? "",
@@ -188,6 +193,7 @@ export async function updateEvent(id: string, input: EventInput): Promise<Manage
           description: input.description,
           startAt: input.startAt,
           endAt: input.endAt,
+          fees: input.fees,
           banner,
           brochure,
           brochureName: newBrochure ? input.brochure!.name : current.brochureName,

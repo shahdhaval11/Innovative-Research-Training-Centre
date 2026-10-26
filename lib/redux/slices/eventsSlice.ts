@@ -10,6 +10,7 @@ export type ManagedEvent = {
   description: string;
   startAt: string; // ISO
   endAt: string; // ISO
+  fees: number;
   banner: string;
   brochure: string;
   brochureName: string;

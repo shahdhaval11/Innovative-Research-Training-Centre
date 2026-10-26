@@ -11,9 +11,10 @@ type FormState = {
   description: string;
   startAt: string; // datetime-local value
   endAt: string;
+  fees: string; // kept as text while editing
 };
 
-const EMPTY: FormState = { type: "Event", title: "", description: "", startAt: "", endAt: "" };
+const EMPTY: FormState = { type: "Event", title: "", description: "", startAt: "", endAt: "", fees: "" };
 
 const FIELD =
   "w-full rounded-md border border-secondary-200 px-3 py-2 text-sm text-secondary-800 outline-none focus:border-primary-600";
@@ -49,6 +50,7 @@ export default function EventFormModal({
           description: event.description,
           startAt: toLocalInputValue(event.startAt),
           endAt: toLocalInputValue(event.endAt),
+          fees: String(event.fees),
         }
       : EMPTY,
   );
@@ -71,6 +73,8 @@ export default function EventFormModal({
     if (!form.endAt) next.endAt = "Select the end date and time.";
     if (form.startAt && form.endAt && new Date(form.endAt) <= new Date(form.startAt))
       next.endAt = "End must be after the start.";
+    if (form.fees.trim() === "" || !(Number(form.fees) >= 0))
+      next.fees = "Enter the fees (0 if free).";
     if (!bannerPreview) next.banner = "Upload a banner image.";
     setErrors(next);
     if (Object.keys(next).length === 0) onSave({ ...form, bannerFile, brochureFile });
@@ -160,6 +164,21 @@ export default function EventFormModal({
               />
               {err("endAt")}
             </div>
+          </div>
+
+          <div>
+            <Label>Fees (₹)</Label>
+            <input
+              type="number"
+              min={0}
+              step="any"
+              inputMode="decimal"
+              placeholder="0 for free"
+              value={form.fees}
+              onChange={(e) => set("fees", e.target.value)}
+              className={FIELD}
+            />
+            {err("fees")}
           </div>
 
           <div>
