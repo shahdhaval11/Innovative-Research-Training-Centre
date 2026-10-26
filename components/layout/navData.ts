@@ -14,7 +14,6 @@ export type NavItem = {
   shortLabel?: string;
   href: string;
   /** Renders a button that opens a modal instead of linking to `href`. */
-  action?: "feedback";
   columns?: NavColumn[];
   cta?: NavLink;
   /** Render the dropdown as a compact, content-sized menu under the nav item instead of a full-width mega panel. */
@@ -326,7 +325,6 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     label: "Feedback",
-    href: "#",
-    action: "feedback",
+    href: "/feedback",
   },
 ];

@@ -7,13 +7,7 @@ import Logo from "./Logo";
 import { NAV_ITEMS } from "./navData";
 import { SITE_CONTACT } from "@/lib/siteConfig";
 
-export default function MobileMenu({
-  onClose,
-  onFeedback,
-}: {
-  onClose: () => void;
-  onFeedback: () => void;
-}) {
+export default function MobileMenu({ onClose }: { onClose: () => void }) {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
@@ -88,14 +82,6 @@ export default function MobileMenu({
                         </div>
                       )}
                     </>
-                  ) : item.action === "feedback" ? (
-                    <button
-                      type="button"
-                      onClick={onFeedback}
-                      className="block w-full px-2 py-3.5 text-left text-sm font-semibold text-secondary-800"
-                    >
-                      {item.label}
-                    </button>
                   ) : (
                     <Link
                       href={item.href}

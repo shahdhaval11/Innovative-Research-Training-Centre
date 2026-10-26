@@ -8,13 +8,11 @@ import Logo from "./Logo";
 import TopBar from "./TopBar";
 import MegaMenuPanel from "./MegaMenuPanel";
 import MobileMenu from "./MobileMenu";
-import FeedbackModal from "@/components/common/FeedbackModal";
 import { NAV_ITEMS } from "./navData";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white">
@@ -37,13 +35,7 @@ export default function Navbar() {
                 >
                   <Link
                     href={item.href}
-                    onClick={(e) => {
-                      setOpenMenu(null);
-                      if (item.action === "feedback") {
-                        e.preventDefault();
-                        setFeedbackOpen(true);
-                      }
-                    }}
+                    onClick={() => setOpenMenu(null)}
                     className={clsx(
                       "flex items-center gap-0.5 rounded-md px-1.5 py-2 text-[13px] font-semibold whitespace-nowrap transition-colors",
                       openMenu === item.label
@@ -112,16 +104,8 @@ export default function Navbar() {
       </div>
 
       {mobileOpen && (
-        <MobileMenu
-          onClose={() => setMobileOpen(false)}
-          onFeedback={() => {
-            setMobileOpen(false);
-            setFeedbackOpen(true);
-          }}
-        />
+        <MobileMenu onClose={() => setMobileOpen(false)} />
       )}
-
-      {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
     </header>
   );
 }
