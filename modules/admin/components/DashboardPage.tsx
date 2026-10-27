@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import { BarChart3, BookOpen, GraduationCap, Inbox, type LucideIcon } from "lucide-react";
+import {
+  BarChart3,
+  BookOpen,
+  CalendarCheck,
+  GraduationCap,
+  Inbox,
+  type LucideIcon,
+} from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { fetchDashboardStats } from "@/lib/redux/slices/dashboardSlice";
 
@@ -9,6 +16,7 @@ const KPI_ICONS: Record<string, LucideIcon> = {
   enquiries: Inbox,
   internships: BookOpen,
   internshipRegistrations: GraduationCap,
+  eventRegistrations: CalendarCheck,
 };
 
 export default function DashboardPage() {

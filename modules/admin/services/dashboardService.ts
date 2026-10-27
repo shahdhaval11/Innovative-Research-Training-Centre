@@ -2,6 +2,7 @@ import { getDb } from "@/lib/mongodb";
 import { ENQUIRIES_COLLECTION_NAME, getUnseenEnquiriesCount } from "./enquiryService";
 import { INTERNSHIP_COLLECTION_NAME } from "./internshipService";
 import { INTERNSHIP_REGISTRATIONS_COLLECTION_NAME } from "./internshipRegistrationService";
+import { EVENT_REGISTRATION_COLLECTION_NAME } from "@/modules/events/services/eventRegistrationService";
 
 export type KpiStat = {
   key: string;
@@ -30,19 +31,29 @@ const KPI_DEFINITIONS = [
     title: "Internship Registrations",
     collection: INTERNSHIP_REGISTRATIONS_COLLECTION_NAME,
   },
+  {
+    key: "eventRegistrations",
+    title: "Event & Workshop Registrations",
+    collection: EVENT_REGISTRATION_COLLECTION_NAME,
+  },
 ] as const;
 
 export async function getDashboardStats(): Promise<KpiStat[]> {
   const db = await getDb();
 
-  const [counts, unseenEnquiriesCount, onlineCount, offlineCount] = await Promise.all([
-    Promise.all(
-      KPI_DEFINITIONS.map((definition) => db.collection(definition.collection).countDocuments()),
-    ),
-    getUnseenEnquiriesCount(),
-    db.collection(INTERNSHIP_COLLECTION_NAME).countDocuments({ mode: "Online" }),
-    db.collection(INTERNSHIP_COLLECTION_NAME).countDocuments({ mode: "Offline" }),
-  ]);
+  const eventRegistrations = db.collection(EVENT_REGISTRATION_COLLECTION_NAME);
+
+  const [counts, unseenEnquiriesCount, onlineCount, offlineCount, eventCount, workshopCount] =
+    await Promise.all([
+      Promise.all(
+        KPI_DEFINITIONS.map((definition) => db.collection(definition.collection).countDocuments()),
+      ),
+      getUnseenEnquiriesCount(),
+      db.collection(INTERNSHIP_COLLECTION_NAME).countDocuments({ mode: "Online" }),
+      db.collection(INTERNSHIP_COLLECTION_NAME).countDocuments({ mode: "Offline" }),
+      eventRegistrations.countDocuments({ type: "Event" }),
+      eventRegistrations.countDocuments({ type: "Workshop" }),
+    ]);
 
   return KPI_DEFINITIONS.map((definition, index) => {
     const stat: KpiStat = {
@@ -59,6 +70,13 @@ export async function getDashboardStats(): Promise<KpiStat[]> {
       stat.breakdown = [
         { label: "Online", count: onlineCount },
         { label: "Offline", count: offlineCount },
+      ];
+    }
+
+    if (definition.key === "eventRegistrations") {
+      stat.breakdown = [
+        { label: "Event", count: eventCount },
+        { label: "Workshop", count: workshopCount },
       ];
     }
 
