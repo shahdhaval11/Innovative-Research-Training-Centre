@@ -22,6 +22,8 @@ export function parseAdvisoryMemberFormData(
   const affiliation = readString(formData, "affiliation");
   const email = readString(formData, "email");
   const phone = readString(formData, "phone");
+  const orderRaw = readString(formData, "order");
+  const order = orderRaw === "" ? NaN : Number(orderRaw);
   const photo = formData.get("photo");
 
   if (
@@ -29,7 +31,9 @@ export function parseAdvisoryMemberFormData(
     !designation ||
     !affiliation ||
     !EMAIL_PATTERN.test(email) ||
-    !isValidPhone(phone)
+    !isValidPhone(phone) ||
+    !Number.isInteger(order) ||
+    order < 0
   ) {
     return { error: "Missing or invalid fields." };
   }
@@ -43,6 +47,6 @@ export function parseAdvisoryMemberFormData(
   }
 
   return {
-    data: { name, designation, affiliation, email, phone, photo: photoFile },
+    data: { name, designation, affiliation, email, phone, order, photo: photoFile },
   };
 }

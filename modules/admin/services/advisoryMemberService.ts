@@ -21,6 +21,7 @@ type AdvisoryMemberDocument = {
   email: string;
   phone: string;
   photo: string; // PHOTO_URL_PREFIX/<id>, or "" when none was uploaded
+  order?: number; // display position on the website; missing on members added before this field
   createdAt: Date;
   updatedAt: Date;
 };
@@ -33,6 +34,7 @@ export type AdvisoryMember = {
   email: string;
   phone: string;
   photo: string;
+  order: number | null;
 };
 
 export type AdvisoryMemberInput = {
@@ -41,6 +43,7 @@ export type AdvisoryMemberInput = {
   affiliation: string;
   email: string;
   phone: string;
+  order: number;
   photo: File | null;
 };
 
@@ -53,6 +56,7 @@ function toAdvisoryMember(doc: AdvisoryMemberDocument): AdvisoryMember {
     email: doc.email ?? "",
     phone: doc.phone ?? "",
     photo: doc.photo,
+    order: doc.order ?? null,
   };
 }
 
@@ -89,7 +93,11 @@ export async function getAdvisoryMembers(): Promise<AdvisoryMember[]> {
     .sort({ createdAt: -1 })
     .toArray();
 
-  return docs.map(toAdvisoryMember);
+  // Ascending by `order`; members without one go last, newest first (the query order).
+  // Array.prototype.sort is stable, so ties keep that order too.
+  return docs
+    .sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || 0)
+    .map(toAdvisoryMember);
 }
 
 export async function createAdvisoryMember(input: AdvisoryMemberInput): Promise<AdvisoryMember> {
@@ -104,6 +112,7 @@ export async function createAdvisoryMember(input: AdvisoryMemberInput): Promise<
     email: input.email,
     phone: input.phone,
     photo,
+    order: input.order,
     createdAt: now,
     updatedAt: now,
   };
@@ -148,6 +157,7 @@ export async function updateAdvisoryMember(
           email: input.email,
           phone: input.phone,
           photo,
+          order: input.order,
           updatedAt: new Date(),
         },
       },

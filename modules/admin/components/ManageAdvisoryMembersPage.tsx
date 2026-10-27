@@ -32,13 +32,17 @@ export default function ManageAdvisoryMembersPage() {
     setFormOpen(true);
   }
 
-  async function handleSave(data: Omit<AdvisoryMember, "id">, photoFile: File | null) {
+  // Suggested order for a new member: one after the highest in use.
+  const nextOrder = items.reduce((max, item) => Math.max(max, (item.order ?? -1) + 1), 0);
+
+  async function handleSave(data: Omit<AdvisoryMember, "id" | "order"> & { order: string }, photoFile: File | null) {
     const formData = new FormData();
     formData.set("name", data.name);
     formData.set("designation", data.designation);
     formData.set("affiliation", data.affiliation);
     formData.set("email", data.email);
     formData.set("phone", data.phone);
+    formData.set("order", data.order.trim());
     if (photoFile) formData.set("photo", photoFile);
 
     setSaving(true);
@@ -117,6 +121,7 @@ export default function ManageAdvisoryMembersPage() {
             <table className="w-full text-left text-sm">
               <thead className="border-b border-secondary-100 bg-secondary-50 text-xs tracking-wide text-secondary-500 uppercase">
                 <tr>
+                  <th className="px-5 py-3 font-semibold">Order</th>
                   <th className="px-5 py-3 font-semibold">Photo</th>
                   <th className="px-5 py-3 font-semibold">Name</th>
                   <th className="px-5 py-3 font-semibold">Designation</th>
@@ -131,6 +136,9 @@ export default function ManageAdvisoryMembersPage() {
               <tbody className="divide-y divide-secondary-100">
                 {items.map((item) => (
                   <tr key={item.id} className="hover:bg-secondary-50">
+                    <td className="px-5 py-3 font-medium text-secondary-800">
+                      {item.order ?? "-"}
+                    </td>
                     <td className="px-5 py-3">
                       {item.photo ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -179,6 +187,7 @@ export default function ManageAdvisoryMembersPage() {
       {formOpen && (
         <AdvisoryMemberFormModal
           member={editing}
+          nextOrder={nextOrder}
           onSave={handleSave}
           saving={saving}
           onClose={() => setFormOpen(false)}

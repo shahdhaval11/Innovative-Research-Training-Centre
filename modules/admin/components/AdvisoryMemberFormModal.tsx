@@ -4,7 +4,8 @@ import { useState } from "react";
 import { X, Upload, User } from "lucide-react";
 import type { AdvisoryMember } from "@/lib/redux/slices/advisoryMembersSlice";
 
-type FormState = Omit<AdvisoryMember, "id">;
+// `order` is kept as text while editing; an empty value means "not set yet".
+type FormState = Omit<AdvisoryMember, "id" | "order"> & { order: string };
 
 const EMPTY: FormState = {
   name: "",
@@ -13,6 +14,7 @@ const EMPTY: FormState = {
   email: "",
   phone: "",
   photo: "",
+  order: "",
 };
 
 const FIELD =
@@ -24,16 +26,22 @@ function Label({ children }: { children: React.ReactNode }) {
 
 export default function AdvisoryMemberFormModal({
   member,
+  nextOrder,
   onSave,
   saving = false,
   onClose,
 }: {
   member: AdvisoryMember | null;
+  nextOrder: number; // suggested order for a new member
   onSave: (data: FormState, photoFile: File | null) => void;
   saving?: boolean;
   onClose: () => void;
 }) {
-  const [form, setForm] = useState<FormState>(member ?? EMPTY);
+  const [form, setForm] = useState<FormState>(
+    member
+      ? { ...member, order: member.order === null ? "" : String(member.order) }
+      : { ...EMPTY, order: String(nextOrder) },
+  );
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
 
@@ -50,6 +58,8 @@ export default function AdvisoryMemberFormModal({
       next.email = "Enter a valid email address.";
     if (!/^\+?\d{7,15}$/.test(form.phone.replace(/[\s\-()]/g, "")))
       next.phone = "Enter a valid phone number.";
+    if (!/^\d+$/.test(form.order.trim()))
+      next.order = "Enter the order as a whole number (0 or more).";
     setErrors(next);
     if (Object.keys(next).length === 0) onSave(form, photoFile);
   }
@@ -133,6 +143,23 @@ export default function AdvisoryMemberFormModal({
               className={FIELD}
             />
             {err("phone")}
+          </div>
+
+          <div>
+            <Label>Order Number</Label>
+            <input
+              type="number"
+              min={0}
+              step={1}
+              inputMode="numeric"
+              value={form.order}
+              onChange={(e) => set("order", e.target.value)}
+              className={FIELD}
+            />
+            <p className="mt-1 text-xs text-secondary-500">
+              Members are listed on the website from the lowest order number to the highest.
+            </p>
+            {err("order")}
           </div>
 
           <div>

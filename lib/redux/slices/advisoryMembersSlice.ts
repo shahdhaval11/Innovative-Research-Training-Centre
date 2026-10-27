@@ -8,6 +8,7 @@ export type AdvisoryMember = {
   email: string;
   phone: string;
   photo: string;
+  order: number | null;
 };
 
 type AdvisoryMembersState = {
