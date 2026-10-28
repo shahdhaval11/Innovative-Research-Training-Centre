@@ -10,7 +10,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { fetchDashboardStats } from "@/lib/redux/slices/dashboardSlice";
+import { fetchDashboardStats, fetchRegistrationTrend } from "@/lib/redux/slices/dashboardSlice";
+import RegistrationTrendChart from "./RegistrationTrendChart";
 
 const KPI_ICONS: Record<string, LucideIcon> = {
   enquiries: Inbox,
@@ -21,10 +22,11 @@ const KPI_ICONS: Record<string, LucideIcon> = {
 
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
-  const { stats, status, error } = useAppSelector((state) => state.dashboard);
+  const { stats, status, error, trend, trendStatus } = useAppSelector((state) => state.dashboard);
 
   useEffect(() => {
     dispatch(fetchDashboardStats());
+    dispatch(fetchRegistrationTrend());
   }, [dispatch]);
 
   return (
@@ -91,6 +93,25 @@ export default function DashboardPage() {
           })}
         </div>
       )}
+
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2">
+        <div className="rounded-lg border border-secondary-100 bg-white p-5 shadow-sm">
+          <h2 className="font-heading text-base font-bold text-secondary-800">
+            Event &amp; Workshop Registrations
+          </h2>
+          <p className="mt-0.5 text-sm text-secondary-500">Registrations per day, last 7 days.</p>
+
+          <div className="mt-4">
+            {trendStatus === "failed" && (
+              <p className="text-sm text-red-600">Failed to load the registration graph.</p>
+            )}
+            {trendStatus !== "failed" && trend.length === 0 && (
+              <p className="text-sm text-secondary-500">Loading graph…</p>
+            )}
+            {trend.length > 0 && <RegistrationTrendChart data={trend} />}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
