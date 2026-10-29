@@ -20,6 +20,37 @@ const KPI_ICONS: Record<string, LucideIcon> = {
   eventRegistrations: CalendarCheck,
 };
 
+const KPI_SKELETON_COUNT = 4;
+
+// Same shape as a KPI card, so the layout doesn't jump when the numbers arrive.
+function KpiCardSkeleton() {
+  return (
+    <div
+      aria-hidden
+      className="animate-pulse rounded-lg border border-secondary-100 bg-white p-5 shadow-sm"
+    >
+      <div className="flex items-center justify-between">
+        <div className="h-4 w-28 rounded bg-secondary-100" />
+        <div className="h-9 w-9 rounded-md bg-secondary-100" />
+      </div>
+      <div className="mt-3 h-9 w-16 rounded bg-secondary-100" />
+    </div>
+  );
+}
+
+// Matches the chart card: legend row, plot area and x-axis labels.
+function TrendChartSkeleton() {
+  return (
+    <div aria-hidden className="animate-pulse">
+      <div className="flex items-center gap-5">
+        <div className="h-4 w-28 rounded bg-secondary-100" />
+        <div className="h-4 w-32 rounded bg-secondary-100" />
+      </div>
+      <div className="mt-3 h-[280px] rounded-md bg-secondary-50" />
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const dispatch = useAppDispatch();
   const { stats, status, error, trend, trendStatus } = useAppSelector((state) => state.dashboard);
@@ -38,7 +69,17 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {status === "loading" && <p className="text-sm text-secondary-500">Loading stats…</p>}
+      {(status === "idle" || status === "loading") && (
+        <div
+          role="status"
+          aria-label="Loading dashboard stats"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {Array.from({ length: KPI_SKELETON_COUNT }, (_, i) => (
+            <KpiCardSkeleton key={i} />
+          ))}
+        </div>
+      )}
 
       {status === "failed" && (
         <p className="text-sm text-red-600">{error ?? "Failed to load dashboard stats."}</p>
@@ -105,9 +146,7 @@ export default function DashboardPage() {
             {trendStatus === "failed" && (
               <p className="text-sm text-red-600">Failed to load the registration graph.</p>
             )}
-            {trendStatus !== "failed" && trend.length === 0 && (
-              <p className="text-sm text-secondary-500">Loading graph…</p>
-            )}
+            {trendStatus !== "failed" && trend.length === 0 && <TrendChartSkeleton />}
             {trend.length > 0 && <RegistrationTrendChart data={trend} />}
           </div>
         </div>
