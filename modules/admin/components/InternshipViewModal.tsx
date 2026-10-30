@@ -46,7 +46,7 @@ export default function InternshipViewModal({
             </p>
             <p className="mt-0.5 text-sm font-medium text-secondary-800">{internship.track}</p>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <p className="text-xs font-semibold tracking-wide text-secondary-400 uppercase">
                 Domain &amp; Mode

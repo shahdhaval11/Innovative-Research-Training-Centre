@@ -50,11 +50,11 @@ export default function EventViewModal({
           <Detail label="Description">
             <p className="whitespace-pre-line">{event.description}</p>
           </Detail>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Detail label="Starts">{formatEventDateTime(event.startAt)}</Detail>
             <Detail label="Ends">{formatEventDateTime(event.endAt)}</Detail>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Detail label="Fees">{formatEventFees(event.fees)}</Detail>
             <Detail label="Type">{event.type}</Detail>
             <Detail label="Status">

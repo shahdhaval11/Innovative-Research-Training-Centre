@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -12,6 +12,8 @@ import {
   CalendarDays,
   LogOut,
   ChevronDown,
+  Menu,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import clsx from "clsx";
@@ -56,7 +58,15 @@ const EVENTS_MENU: NavGroup = {
   ],
 };
 
-function NavGroupMenu({ menu, pathname }: { menu: NavGroup; pathname: string }) {
+function NavGroupMenu({
+  menu,
+  pathname,
+  onNavigate,
+}: {
+  menu: NavGroup;
+  pathname: string;
+  onNavigate?: () => void;
+}) {
   const active = menu.children.some((c) => pathname === c.href);
   const [open, setOpen] = useState(active);
   const Icon = menu.icon;
@@ -84,6 +94,7 @@ function NavGroupMenu({ menu, pathname }: { menu: NavGroup; pathname: string }) 
             <Link
               key={href}
               href={href}
+              onClick={onNavigate}
               className={clsx(
                 "block rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 pathname === href
@@ -100,25 +111,17 @@ function NavGroupMenu({ menu, pathname }: { menu: NavGroup; pathname: string }) 
   );
 }
 
-export default function AdminSidebar() {
-  const pathname = usePathname();
-  const router = useRouter();
-
-  async function handleLogout() {
-    try {
-      await fetch("/api/admin/logout", { method: "POST" });
-    } finally {
-      router.push("/admin/login");
-      router.refresh();
-    }
-  }
-
+function SidebarContent({
+  pathname,
+  onNavigate,
+  onLogout,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+  onLogout: () => void;
+}) {
   return (
-    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col bg-secondary-800 text-white">
-      <div className="p-6">
-        <Logo variant="dark" />
-      </div>
-
+    <>
       <nav className="flex-1 space-y-1 overflow-y-auto px-4">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
@@ -126,6 +129,7 @@ export default function AdminSidebar() {
             <Link
               key={href}
               href={href}
+              onClick={onNavigate}
               className={clsx(
                 "flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
                 active
@@ -139,10 +143,11 @@ export default function AdminSidebar() {
           );
         })}
 
-        <NavGroupMenu menu={INTERNSHIP_MENU} pathname={pathname} />
+        <NavGroupMenu menu={INTERNSHIP_MENU} pathname={pathname} onNavigate={onNavigate} />
 
         <Link
           href={ADVISORY_NAV_ITEM.href}
+          onClick={onNavigate}
           className={clsx(
             "flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
             pathname === ADVISORY_NAV_ITEM.href
@@ -154,19 +159,107 @@ export default function AdminSidebar() {
           {ADVISORY_NAV_ITEM.label}
         </Link>
 
-        <NavGroupMenu menu={EVENTS_MENU} pathname={pathname} />
+        <NavGroupMenu menu={EVENTS_MENU} pathname={pathname} onNavigate={onNavigate} />
       </nav>
 
       <div className="border-t border-white/10 p-4">
         <button
           type="button"
-          onClick={handleLogout}
+          onClick={onLogout}
           className="flex w-full items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium text-secondary-200 hover:bg-white/10 hover:text-white"
         >
           <LogOut className="h-4 w-4" />
           Logout
         </button>
       </div>
-    </aside>
+    </>
+  );
+}
+
+export default function AdminSidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMobileOpen(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  async function handleLogout() {
+    try {
+      await fetch("/api/admin/logout", { method: "POST" });
+    } finally {
+      router.push("/admin/login");
+      router.refresh();
+    }
+  }
+
+  return (
+    <>
+      {/* Mobile / tablet: top bar with burger + slide-in drawer */}
+      <header className="sticky top-0 z-30 flex items-center justify-between bg-secondary-800 px-4 py-3 text-white lg:hidden">
+        <Logo variant="dark" />
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+          aria-expanded={mobileOpen}
+          className="rounded-md p-2 text-secondary-200 hover:bg-white/10 hover:text-white"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+      </header>
+
+      <div
+        className={clsx("fixed inset-0 z-40 lg:hidden", !mobileOpen && "pointer-events-none")}
+        aria-hidden={!mobileOpen}
+      >
+        <div
+          onClick={() => setMobileOpen(false)}
+          className={clsx(
+            "absolute inset-0 bg-secondary-900/60 transition-opacity",
+            mobileOpen ? "opacity-100" : "opacity-0",
+          )}
+        />
+        <aside
+          className={clsx(
+            "absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-secondary-800 text-white shadow-xl transition-transform duration-200",
+            mobileOpen ? "translate-x-0" : "-translate-x-full",
+          )}
+        >
+          <div className="flex items-center justify-between p-4">
+            <Logo variant="dark" />
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close menu"
+              className="rounded-md p-2 text-secondary-200 hover:bg-white/10 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <SidebarContent
+            pathname={pathname}
+            onNavigate={() => setMobileOpen(false)}
+            onLogout={handleLogout}
+          />
+        </aside>
+      </div>
+
+      {/* Desktop: fixed sidebar */}
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-secondary-800 text-white lg:flex">
+        <div className="p-6">
+          <Logo variant="dark" />
+        </div>
+        <SidebarContent pathname={pathname} onLogout={handleLogout} />
+      </aside>
+    </>
   );
 }
