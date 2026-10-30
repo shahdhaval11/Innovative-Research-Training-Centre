@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="relative text-xs text-secondary-400">
-          &copy; {new Date().getFullYear()} NanoNova Research Training Centre
+          &copy; {new Date().getFullYear()} NanoNova Research and Training Centre
         </p>
       </section>
 

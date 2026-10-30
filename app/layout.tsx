@@ -11,8 +11,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "NanoNova Research Training Centre",
-    template: "%s | NanoNova Research Training Centre",
+    default: "NanoNova Research and Training Centre",
+    template: "%s | NanoNova Research and Training Centre",
   },
   description:
     "Industry-oriented training, research guidance and hands-on laboratory experience in Microbiology, Biotechnology, Bioinformatics, Medical Laboratory Science and more.",

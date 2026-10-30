@@ -112,7 +112,7 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="container-app flex flex-col items-center justify-between gap-3 py-5 text-xs text-secondary-400 sm:flex-row">
-          <p>© {new Date().getFullYear()} NanoNova Research Training Centre. All Rights Reserved.</p>
+          <p>© {new Date().getFullYear()} NanoNova Research and Training Centre. All Rights Reserved.</p>
           <div className="flex items-center gap-5">
             <Link href="/privacy-policy" className="hover:text-primary-300">
               Privacy Policy

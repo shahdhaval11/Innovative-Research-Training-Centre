@@ -30,7 +30,7 @@ export default function Logo({ variant = "light" }: { variant?: "light" | "dark"
             dark ? "text-secondary-200" : "text-secondary-500",
           )}
         >
-          Research Training Centre
+          Research and Training Centre
         </span>
       </span>
     </Link>

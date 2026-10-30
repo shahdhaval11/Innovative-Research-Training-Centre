@@ -29,7 +29,7 @@ export default function Hero() {
         <Reveal className="lg:col-span-7">
           <span className="eyebrow rounded-full border border-primary-100 bg-primary-50 px-3.5 py-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-primary-600" />
-            Welcome to NanoNova Research Training Centre
+            Welcome to NanoNova Research and Training Centre
           </span>
 
           <h1 className="mt-5 font-heading text-4xl leading-[1.1] font-extrabold text-secondary-800 sm:text-5xl lg:text-6xl">
