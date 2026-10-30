@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarDays, Eye, Pencil, Plus, Trash2 } from "lucide-react";
+import { CalendarDays, Eye, Pencil, Plus, Send, Trash2 } from "lucide-react";
 import clsx from "clsx";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
@@ -16,6 +16,7 @@ import {
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import EventFormModal, { type EventFormValues } from "./EventFormModal";
 import EventViewModal from "./EventViewModal";
+import SendMeetingLinkModal from "./SendMeetingLinkModal";
 import { formatEventDateTime, formatEventFees } from "./eventFormat";
 
 export default function ManageEventsPage() {
@@ -28,6 +29,7 @@ export default function ManageEventsPage() {
   const [deleting, setDeleting] = useState<ManagedEvent | null>(null);
   const [deletingBusy, setDeletingBusy] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [meetingOpen, setMeetingOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchEvents());
@@ -106,14 +108,24 @@ export default function ManageEventsPage() {
             Add, edit, activate or deactivate the events and workshops shown on the website.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => openForm(null)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
-        >
-          <Plus className="h-4 w-4" />
-          Add Event / Workshop
-        </button>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setMeetingOpen(true)}
+            className="inline-flex items-center gap-2 rounded-md border border-primary-600 px-4 py-2 text-sm font-semibold text-primary-700 hover:bg-primary-50"
+          >
+            <Send className="h-4 w-4" />
+            Send meeting link
+          </button>
+          <button
+            type="button"
+            onClick={() => openForm(null)}
+            className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
+          >
+            <Plus className="h-4 w-4" />
+            Add Event / Workshop
+          </button>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-lg border border-secondary-100 bg-white shadow-sm">
@@ -234,6 +246,13 @@ export default function ManageEventsPage() {
           onSave={handleSave}
           saving={saving}
           onClose={() => setFormOpen(false)}
+        />
+      )}
+
+      {meetingOpen && (
+        <SendMeetingLinkModal
+          events={items.filter((item) => item.status === "active")}
+          onClose={() => setMeetingOpen(false)}
         />
       )}
 
